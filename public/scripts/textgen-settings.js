@@ -1099,10 +1099,75 @@ export function getTextGenGenerationData(finalPrompt, maxTokens, isImpersonate, 
     const dynatemp = isDynamicTemperatureSupported();
     const { banned_tokens, banned_strings } = getCustomTokenBans();
 
+    // Default 
+    // let params = {
+    //     'prompt': finalPrompt,
+    //     'model': getTextGenModel(),
+    //     'max_new_tokens': maxTokens,
+    //     'max_tokens': maxTokens,
+    //     'logprobs': power_user.request_token_probabilities ? getLogprobsNumber() : undefined,
+    //     'temperature': dynatemp ? (settings.min_temp + settings.max_temp) / 2 : settings.temp,
+    //     'top_p': settings.top_p,
+    //     'typical_p': settings.typical_p,
+    //     'typical': settings.typical_p,
+    //     'sampler_seed': settings.seed,
+    //     'min_p': settings.min_p,
+    //     'repetition_penalty': settings.rep_pen,
+    //     'frequency_penalty': settings.freq_pen,
+    //     'presence_penalty': settings.presence_pen,
+    //     'top_k': settings.top_k,
+    //     'skew': settings.skew,
+    //     'min_length': settings.type === OOBA ? settings.min_length : undefined,
+    //     'minimum_message_content_tokens': settings.type === DREAMGEN ? settings.min_length : undefined,
+    //     'min_tokens': settings.min_length,
+    //     'num_beams': settings.type === OOBA ? settings.num_beams : undefined,
+    //     'length_penalty': settings.type === OOBA ? settings.length_penalty : undefined,
+    //     'early_stopping': settings.type === OOBA ? settings.early_stopping : undefined,
+    //     'add_bos_token': settings.add_bos_token,
+    //     'dynamic_temperature': dynatemp ? true : undefined,
+    //     'dynatemp_low': dynatemp ? settings.min_temp : undefined,
+    //     'dynatemp_high': dynatemp ? settings.max_temp : undefined,
+    //     'dynatemp_range': dynatemp ? (settings.max_temp - settings.min_temp) / 2 : undefined,
+    //     'dynatemp_exponent': dynatemp ? settings.dynatemp_exponent : undefined,
+    //     'smoothing_factor': settings.smoothing_factor,
+    //     'smoothing_curve': settings.smoothing_curve,
+    //     'dry_allowed_length': settings.dry_allowed_length,
+    //     'dry_multiplier': settings.dry_multiplier,
+    //     'dry_base': settings.dry_base,
+    //     'dry_sequence_breakers': replaceMacrosInList(settings.dry_sequence_breakers),
+    //     'dry_penalty_last_n': settings.dry_penalty_last_n,
+    //     'max_tokens_second': settings.max_tokens_second,
+    //     'sampler_priority': settings.type === OOBA ? settings.sampler_priority : undefined,
+    //     'samplers': settings.type === LLAMACPP ? settings.samplers : undefined,
+    //     'stopping_strings': getStoppingStrings(isImpersonate, isContinue),
+    //     'stop': getStoppingStrings(isImpersonate, isContinue),
+    //     'truncation_length': max_context,
+    //     'ban_eos_token': settings.ban_eos_token,
+    //     'skip_special_tokens': settings.skip_special_tokens,
+    //     'top_a': settings.top_a,
+    //     'tfs': settings.tfs,
+    //     'epsilon_cutoff': [OOBA, MANCER].includes(settings.type) ? settings.epsilon_cutoff : undefined,
+    //     'eta_cutoff': [OOBA, MANCER].includes(settings.type) ? settings.eta_cutoff : undefined,
+    //     'mirostat_mode': settings.mirostat_mode,
+    //     'mirostat_tau': settings.mirostat_tau,
+    //     'mirostat_eta': settings.mirostat_eta,
+    //     'custom_token_bans': [APHRODITE, MANCER].includes(settings.type) ?
+    //         toIntArray(banned_tokens) :
+    //         banned_tokens,
+    //     'banned_strings': banned_strings,
+    //     'api_type': settings.type,
+    //     'api_server': getTextGenServer(),
+    //     'legacy_api': settings.legacy_api && settings.type === OOBA,
+    //     'sampler_order': settings.type === textgen_types.KOBOLDCPP ? settings.sampler_order : undefined,
+    //     'xtc_threshold': settings.xtc_threshold,
+    //     'xtc_probability': settings.xtc_probability,
+    // };
+
+    //GPT suggested (to prompt only 1 line)
     let params = {
         'prompt': finalPrompt,
         'model': getTextGenModel(),
-        'max_new_tokens': maxTokens,
+        'max_new_tokens': 50,  // Limit the response to 20 tokens
         'max_tokens': maxTokens,
         'logprobs': power_user.request_token_probabilities ? getLogprobsNumber() : undefined,
         'temperature': dynatemp ? (settings.min_temp + settings.max_temp) / 2 : settings.temp,
@@ -1116,9 +1181,9 @@ export function getTextGenGenerationData(finalPrompt, maxTokens, isImpersonate, 
         'presence_penalty': settings.presence_pen,
         'top_k': settings.top_k,
         'skew': settings.skew,
-        'min_length': settings.type === OOBA ? settings.min_length : undefined,
-        'minimum_message_content_tokens': settings.type === DREAMGEN ? settings.min_length : undefined,
-        'min_tokens': settings.min_length,
+        'min_length': undefined,  // Disable minimum length to avoid long responses
+        'minimum_message_content_tokens': undefined,  // Keep it undefined for one-line responses
+        'min_tokens': 5,  // Allow a few tokens to ensure the response isn't too short
         'num_beams': settings.type === OOBA ? settings.num_beams : undefined,
         'length_penalty': settings.type === OOBA ? settings.length_penalty : undefined,
         'early_stopping': settings.type === OOBA ? settings.early_stopping : undefined,
@@ -1138,8 +1203,8 @@ export function getTextGenGenerationData(finalPrompt, maxTokens, isImpersonate, 
         'max_tokens_second': settings.max_tokens_second,
         'sampler_priority': settings.type === OOBA ? settings.sampler_priority : undefined,
         'samplers': settings.type === LLAMACPP ? settings.samplers : undefined,
-        'stopping_strings': getStoppingStrings(isImpersonate, isContinue),
-        'stop': getStoppingStrings(isImpersonate, isContinue),
+        'stopping_strings': ['\n'],  // Stop after a sentence or newline
+        'stop': ['.', '\n'],  // Ensure the model stops after generating one sentence
         'truncation_length': max_context,
         'ban_eos_token': settings.ban_eos_token,
         'skip_special_tokens': settings.skip_special_tokens,
@@ -1161,6 +1226,9 @@ export function getTextGenGenerationData(finalPrompt, maxTokens, isImpersonate, 
         'xtc_threshold': settings.xtc_threshold,
         'xtc_probability': settings.xtc_probability,
     };
+
+    
+
     const nonAphroditeParams = {
         'rep_pen': settings.rep_pen,
         'rep_pen_range': settings.rep_pen_range,

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>SillyTavern</title>
+    <title>Animechat.ai</title>
     <base href="/">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
@@ -63,10 +63,14 @@
     </div>
     <div id="top-settings-holder">
         <!-- background selection menu -->
+
+        <!-- Nav icons 
+                AI Configuration -->
         <div id="ai-config-button" class="drawer">
             <div class="drawer-toggle drawer-header">
                 <div id="leftNavDrawerIcon" class="drawer-icon fa-solid fa-sliders fa-fw closedIcon" title="AI Response Configuration" data-i18n="[title]AI Response Configuration"></div>
             </div>
+            <!-- AI Config Left Panel -->
             <div id="left-nav-panel" class="drawer-content fillLeft closedDrawer">
                 <div id="left-nav-panelheader" class="fa-solid fa-grip drag-grabber"></div>
                 <div id="lm_button_panel_pin_div" title="Locked = AI Configuration panel will stay open" data-i18n="[title]AI Configuration panel will stay open">
@@ -1938,6 +1942,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- API Configration (sys settings) -->
         <div id="sys-settings-button" class="drawer">
             <div class="drawer-toggle drawer-header">
                 <div id="API-status-top" class="drawer-icon fa-solid fa-plug-circle-exclamation fa-fw closedIcon" title="API Connections" data-i18n="[title]API Connections;[no_connection_text]api_no_connection" no_connection_text="No connection..."></div>
@@ -3127,6 +3133,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- AI Response Formatting -->
         <div id="advanced-formatting-button" class="drawer">
             <div class="drawer-toggle">
                 <div class="drawer-icon fa-solid fa-font fa-fw closedIcon" title="AI Response Formatting" data-i18n="[title]AI Response Formatting"></div>
@@ -3573,6 +3581,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- World Info -->
         <div id="WI-SP-button" class="drawer">
             <div class="drawer-toggle drawer-header">
                 <div id="WIDrawerIcon" class="drawer-icon fa-solid fa-book-atlas fa-fw closedIcon " title="World Info" data-i18n="[title]World Info"></div>
@@ -3774,6 +3784,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- User Settings -->
         <div id="user-settings-button" class="drawer">
             <div class="drawer-toggle">
                 <div class="drawer-icon fa-solid fa-user-cog fa-fw closedIcon" title="User Settings" data-i18n="[title]User Settings"></div>
@@ -4461,6 +4473,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Change Background Image -->
         <div id="logo_block" class="drawer">
             <div id="site_logo" class="drawer-toggle drawer-header" title="Change Background Image" data-i18n="[title]Change Background Image">
                 <div class="drawer-icon fa-solid fa-panorama fa-fw closedIcon"></div>
@@ -4499,6 +4513,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Extensions -->
         <div id="extensions-settings-button" class="drawer">
             <div class="drawer-toggle">
                 <div class="drawer-icon fa-solid fa-cubes fa-fw closedIcon" title="Extensions" data-i18n="[title]Extensions"></div>
@@ -4572,6 +4588,8 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Persona Management -->
         <div id="persona-management-button" class="drawer">
             <div class="drawer-toggle">
                 <div class="drawer-icon fa-solid fa-face-smile fa-fw closedIcon" title="Persona Management" data-i18n="[title]Persona Management"></div>
@@ -4680,11 +4698,14 @@
                 </div>
             </div>
         </div>
+
+        <!-- Character Management Holder -->
         <div id="rightNavHolder" class="drawer">
             <div id="unimportantYes" class="drawer-toggle drawer-header">
                 <div id="rightNavDrawerIcon" class="drawer-icon fa-solid fa-address-card fa-fw closedIcon" title="Character Management" data-i18n="[title]Character Management">
                 </div>
             </div>
+            <!-- Character Management Tab -->
             <nav id="right-nav-panel" class="drawer-content closedDrawer fillRight">
                 <div id="right-nav-panelheader" class="fa-solid fa-grip drag-grabber">
                 </div>
@@ -5057,6 +5078,7 @@
                 </div>
             </nav>
         </div>
+
     </div>
     <!-- various fullscreen popups -->
     <div name="templatesAndPopupsWrapper"> <!--this div is just for IDE sanity for quick collapsing-->
@@ -5965,6 +5987,7 @@
             </div>
         </div>
 
+        <!-- Starting Popup -->
         <div id="onboarding_template" class="template_element">
             <div class="onboarding">
                 <h3 data-i18n="Welcome to SillyTavern!">Welcome to SillyTavern!</h3>
@@ -6015,6 +6038,7 @@
                 <h4 data-i18n="Persona Name:">Persona Name:</h4>
             </div>
         </div>
+
         <div id="group_member_template" class="template_element">
             <div class="group_member">
                 <div class="avatar">
@@ -6500,11 +6524,19 @@
                         </button>
                     </div>
                 </form>
+
+                <!-- Bottom Input bar -->
                 <div id="nonQRFormItems">
+
+                    <!-- Extensions/other settings -->
                     <div id="leftSendForm" class="alignContentCenter">
                         <div id="options_button" class="fa-solid fa-bars interactable"></div>
                     </div>
+
+                    <!-- Textarea Input -->
                     <textarea id="send_textarea" name="text" class="mdHotkeys" data-i18n="[no_connection_text]Not connected to API!;[connected_text]Type a message, or /? for help" placeholder="Not connected to API!" no_connection_text="Not connected to API!" connected_text="Type a message, or /? for help"></textarea>
+
+                    <!-- Send/other Buttons -->
                     <div id="rightSendForm" class="alignContentCenter">
                         <div id="stscript_continue" title="Continue script execution" class="stscript_btn stscript_continue" data-i18n="[title]Continue script execution">
                             <i class="fa-solid fa-play"></i>
@@ -6522,10 +6554,13 @@
                         <div id="mes_continue" class="fa-fw fa-solid fa-arrow-right interactable displayNone" title="Continue the last message" data-i18n="[title]Continue the last message"></div>
                         <div id="send_but" class="fa-solid fa-paper-plane interactable displayNone" title="Send a message" data-i18n="[title]Send a message"></div>
                     </div>
+
                 </div>
+
             </div>
         </div>
     </div>
+
     <!-- popups live outside sheld to avoid blur conflicts -->
     <div id="options" class="font-family-reset" style="display: none;">
         <div class="options-content">
