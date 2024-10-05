@@ -3243,11 +3243,19 @@ export async function generateRaw(prompt, api, instructOverride, quietToLoud, sy
 
         let data = {};
 
+        //Where the input is passed into AI to generate response
+        //KoboldHorde
         if (api == 'koboldhorde') {
             data = await generateHorde(prompt, generateData, abortController.signal, false);
-        } else if (api == 'openai') {
+        } 
+    
+        //OpenAI    
+        else if (api == 'openai') {
             data = await sendOpenAIRequest('quiet', generateData, abortController.signal);
-        } else {
+        } 
+        
+        //Everything Else
+        else {
             const generateUrl = getGenerateUrl(api);
             const response = await fetch(generateUrl, {
                 method: 'POST',
@@ -6515,8 +6523,8 @@ export async function getSettings() {
         // Load character tags
         loadTagsSettings(settings);
 
-        // Load background
-        loadBackgroundSettings(settings);
+        // Load background - removed
+        //loadBackgroundSettings(settings);
 
         // Load proxy presets
         loadProxyPresets(settings);

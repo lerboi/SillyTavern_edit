@@ -112,12 +112,47 @@ export function getKoboldGenerationData(finalPrompt, settings, maxLength, maxCon
     const isContinue = type === 'continue';
     const sampler_order = kai_settings.sampler_order || settings.sampler_order;
 
+    //Default generate_data
+//     let generate_data = {
+//         prompt: finalPrompt,
+//         gui_settings: false,
+//         sampler_order: sampler_order,
+//         max_context_length: Number(maxContextLength),
+//         max_length: maxLength,
+//         rep_pen: Number(kai_settings.rep_pen),
+//         rep_pen_range: Number(kai_settings.rep_pen_range),
+//         rep_pen_slope: kai_settings.rep_pen_slope,
+//         temperature: Number(kai_settings.temp),
+//         tfs: kai_settings.tfs,
+//         top_a: kai_settings.top_a,
+//         top_k: kai_settings.top_k,
+//         top_p: kai_settings.top_p,
+//         min_p: (kai_flags.can_use_min_p || isHorde) ? kai_settings.min_p : undefined,
+//         typical: kai_settings.typical,
+//         use_world_info: false,
+//         singleline: false,
+//         stop_sequence: (kai_flags.can_use_stop_sequence || isHorde) ? getStoppingStrings(isImpersonate, isContinue) : undefined,
+//         streaming: kai_settings.streaming_kobold && kai_flags.can_use_streaming && type !== 'quiet',
+//         can_abort: kai_flags.can_use_streaming,
+//         mirostat: (kai_flags.can_use_mirostat || isHorde) ? kai_settings.mirostat : undefined,
+//         mirostat_tau: (kai_flags.can_use_mirostat || isHorde) ? kai_settings.mirostat_tau : undefined,
+//         mirostat_eta: (kai_flags.can_use_mirostat || isHorde) ? kai_settings.mirostat_eta : undefined,
+//         use_default_badwordsids: (kai_flags.can_use_default_badwordsids || isHorde) ? kai_settings.use_default_badwordsids : undefined,
+//         grammar: (kai_flags.can_use_grammar || isHorde) ? substituteParams(kai_settings.grammar) : undefined,
+//         sampler_seed: kai_settings.seed >= 0 ? kai_settings.seed : undefined,
+
+//         api_server,
+//     };
+//     return generate_data;
+// }
+
+    // GPT suggested for one line
     let generate_data = {
         prompt: finalPrompt,
         gui_settings: false,
         sampler_order: sampler_order,
-        max_context_length: Number(maxContextLength),
-        max_length: maxLength,
+        max_context_length: 80,
+        max_length: 80,  // Adjusting this to limit the response length
         rep_pen: Number(kai_settings.rep_pen),
         rep_pen_range: Number(kai_settings.rep_pen_range),
         rep_pen_slope: kai_settings.rep_pen_slope,
@@ -129,7 +164,7 @@ export function getKoboldGenerationData(finalPrompt, settings, maxLength, maxCon
         min_p: (kai_flags.can_use_min_p || isHorde) ? kai_settings.min_p : undefined,
         typical: kai_settings.typical,
         use_world_info: false,
-        singleline: false,
+        singleline: true,  // Ensuring the response is limited to one line
         stop_sequence: (kai_flags.can_use_stop_sequence || isHorde) ? getStoppingStrings(isImpersonate, isContinue) : undefined,
         streaming: kai_settings.streaming_kobold && kai_flags.can_use_streaming && type !== 'quiet',
         can_abort: kai_flags.can_use_streaming,
@@ -144,7 +179,6 @@ export function getKoboldGenerationData(finalPrompt, settings, maxLength, maxCon
     };
     return generate_data;
 }
-
 function tryParseStreamingError(response, decoded) {
     try {
         const data = JSON.parse(decoded);

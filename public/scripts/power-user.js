@@ -245,7 +245,7 @@ let power_user = {
     sysprompt: {
         enabled: true,
         name: 'Neutral - Chat',
-        content: 'Write {{char}}\'s next reply in a fictional chat between {{char}} and {{user}}.',
+        content: 'Write {{char}}\'s next reply in a fictional chat between {{char}} and {{user}}. Do not predict {{user}}\'s next reply after {{char}}\'s first reply',
     },
 
     personas: {},

@@ -5123,7 +5123,17 @@ getModels() run from /scripts/horde.js line 56
 </div>
 
 AIs response settings -> textgen-settings.js, getTextGenGenerationData()
+for KoboldAI -> kai-settings.js, generate_data
 
 Get First Message = macros.js, getFirstIncludedMessageId()
 
 /scripts/group-chats.js = AI response
+
+//WHERE USER INPUT IS PASSED TO GENERATE RESPONSE
+script.js -> 
+
+//FOR Kobold Horde GENERATIONS
+horde.js -> generateHorde()
+
+//CODE THAT IS EDITING THE CHAT SECTION
+jquery-3.5.1.min.js

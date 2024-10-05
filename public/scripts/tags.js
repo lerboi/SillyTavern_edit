@@ -1861,7 +1861,8 @@ function registerTagsSlashCommands() {
             return String(result);
         },
         namedArgumentList: [
-            SlashCommandNamedArgument.fromProps({ name: 'name',
+            SlashCommandNamedArgument.fromProps({
+                name: 'name',
                 description: 'Character name',
                 typeList: [ARGUMENT_TYPE.STRING],
                 defaultValue: '{{char}}',
@@ -1869,7 +1870,8 @@ function registerTagsSlashCommands() {
             }),
         ],
         unnamedArgumentList: [
-            SlashCommandArgument.fromProps({ description: 'tag name',
+            SlashCommandArgument.fromProps({
+                description: 'tag name',
                 typeList: [ARGUMENT_TYPE.STRING],
                 isRequired: true,
                 enumProvider: commonEnumProviders.tagsForChar('not-existing'),
@@ -1906,7 +1908,8 @@ function registerTagsSlashCommands() {
             return String(result);
         },
         namedArgumentList: [
-            SlashCommandNamedArgument.fromProps({ name: 'name',
+            SlashCommandNamedArgument.fromProps({
+                name: 'name',
                 description: 'Character name',
                 typeList: [ARGUMENT_TYPE.STRING],
                 defaultValue: '{{char}}',
@@ -1914,7 +1917,8 @@ function registerTagsSlashCommands() {
             }),
         ],
         unnamedArgumentList: [
-            SlashCommandArgument.fromProps({ description: 'tag name',
+            SlashCommandArgument.fromProps({
+                description: 'tag name',
                 typeList: [ARGUMENT_TYPE.STRING],
                 isRequired: true,
                 /**@param {SlashCommandExecutor} executor */
