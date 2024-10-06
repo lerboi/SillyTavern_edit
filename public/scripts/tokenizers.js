@@ -5,7 +5,7 @@ import { groups, selected_group } from './group-chats.js';
 import { getStringHash } from './utils.js';
 import { kai_flags } from './kai-settings.js';
 import { textgen_types, textgenerationwebui_settings as textgen_settings, getTextGenServer, getTextGenModel } from './textgen-settings.js';
-import { getCurrentDreamGenModelTokenizer, getCurrentOpenRouterModelTokenizer, openRouterModels } from './textgen-models.js';
+import { getCurrentDreamGenModelTokenizer, getCurrentOpenRouterModelTokenizer } from './textgen-models.js';
 
 const { OOBA, TABBY, KOBOLDCPP, VLLM, APHRODITE, LLAMACPP, OPENROUTER, DREAMGEN } = textgen_types;
 
@@ -573,56 +573,6 @@ export function getTokenizerModel() {
         }
     }
 
-    // And for OpenRouter (if not a site model, then it's impossible to determine the tokenizer)
-    if (main_api == 'openai' && oai_settings.chat_completion_source == chat_completion_sources.OPENROUTER && oai_settings.openrouter_model ||
-        main_api == 'textgenerationwebui' && textgen_settings.type === OPENROUTER && textgen_settings.openrouter_model) {
-        const model = main_api == 'openai'
-            ? model_list.find(x => x.id === oai_settings.openrouter_model)
-            : openRouterModels.find(x => x.id === textgen_settings.openrouter_model);
-
-        if (model?.architecture?.tokenizer === 'Llama2') {
-            return llamaTokenizer;
-        }
-        else if (model?.architecture?.tokenizer === 'Llama3') {
-            return llama3Tokenizer;
-        }
-        else if (model?.architecture?.tokenizer === 'Mistral') {
-            return mistralTokenizer;
-        }
-        else if (model?.architecture?.tokenizer === 'Yi') {
-            return yiTokenizer;
-        }
-        else if (model?.architecture?.tokenizer === 'Gemini') {
-            return gemmaTokenizer;
-        }
-        else if (model?.architecture?.tokenizer === 'Qwen') {
-            return qwen2Tokenizer;
-        }
-        else if (model?.architecture?.tokenizer === 'Cohere') {
-            return commandRTokenizer;
-        }
-        else if (oai_settings.openrouter_model.includes('gpt-4o')) {
-            return gpt4oTokenizer;
-        }
-        else if (oai_settings.openrouter_model.includes('gpt-4')) {
-            return gpt4Tokenizer;
-        }
-        else if (oai_settings.openrouter_model.includes('gpt-3.5-turbo-0301')) {
-            return turbo0301Tokenizer;
-        }
-        else if (oai_settings.openrouter_model.includes('gpt-3.5-turbo')) {
-            return turboTokenizer;
-        }
-        else if (oai_settings.openrouter_model.includes('claude')) {
-            return claudeTokenizer;
-        }
-        else if (oai_settings.openrouter_model.includes('GPT-NeoXT')) {
-            return gpt2Tokenizer;
-        }
-        else if (oai_settings.openrouter_model.includes('jamba')) {
-            return jambaTokenizer;
-        }
-    }
 
     if (oai_settings.chat_completion_source == chat_completion_sources.COHERE) {
         return commandRTokenizer;

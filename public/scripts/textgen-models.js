@@ -13,39 +13,6 @@ let vllmModels = [];
 let aphroditeModels = [];
 let featherlessModels = [];
 let tabbyModels = [];
-export let openRouterModels = [];
-
-/**
- * List of OpenRouter providers.
- * @type {string[]}
- */
-const OPENROUTER_PROVIDERS = [
-    'OpenAI',
-    'Anthropic',
-    'HuggingFace',
-    'Google',
-    'Mancer',
-    'Mancer 2',
-    'Together',
-    'DeepInfra',
-    'Azure',
-    'Modal',
-    'AnyScale',
-    'Replicate',
-    'Perplexity',
-    'Recursal',
-    'Fireworks',
-    'Mistral',
-    'Groq',
-    'Cohere',
-    'Lepton',
-    'OctoAI',
-    'Novita',
-    'Lynn',
-    'Lynn 2',
-    'DeepSeek',
-    'Infermatic',
-];
 
 export async function loadOllamaModels(data) {
     if (!Array.isArray(data)) {
@@ -674,13 +641,6 @@ export function initTextGenModels() {
     $('#tabby_download_model').on('click', downloadTabbyModel);
     $('#tabby_model').on('change', onTabbyModelSelect);
 
-    const providersSelect = $('.openrouter_providers');
-    for (const provider of OPENROUTER_PROVIDERS) {
-        providersSelect.append($('<option>', {
-            value: provider,
-            text: provider,
-        }));
-    }
 
     if (!isMobile()) {
         $('#mancer_model').select2({
@@ -752,21 +712,6 @@ export function initTextGenModels() {
             width: '100%',
             templateResult: getFeatherlessModelTemplate,
         });
-        providersSelect.select2({
-            sorter: data => data.sort((a, b) => a.text.localeCompare(b.text)),
-            placeholder: 'Select providers. No selection = all providers.',
-            searchInputPlaceholder: 'Search providers...',
-            searchInputCssClass: 'text_pole',
-            width: '100%',
-            closeOnSelect: false,
-        });
-        providersSelect.on('select2:select', function (/** @type {any} */ evt) {
-            const element = evt.params.data.element;
-            const $element = $(element);
-
-            $element.detach();
-            $(this).append($element);
-            $(this).trigger('change');
-        });
+        
     }
 }
