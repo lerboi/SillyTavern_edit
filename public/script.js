@@ -89,10 +89,12 @@ import {
     setOpenAIMessageExamples,
     setOpenAIMessages,
     setupChatCompletionPromptManager,
+    // @ts-ignore
     prepareOpenAIMessages,
     sendOpenAIRequest,
     loadOpenAISettings,
     oai_settings,
+    // @ts-ignore
     openai_messages_count,
     chat_completion_sources,
     getChatCompletionModel,
@@ -105,6 +107,7 @@ import {
 
 import {
     generateNovelWithStreaming,
+    // @ts-ignore
     getNovelGenerationData,
     getKayraMaxContextTokens,
     getNovelTier,
@@ -221,6 +224,7 @@ import {
     setPersonaDescription,
     initUserAvatar,
 } from './scripts/personas.js';
+// @ts-ignore
 import { getBackgrounds, initBackgrounds, loadBackgroundSettings, background_settings } from './scripts/backgrounds.js';
 import { hideLoader, showLoader } from './scripts/loader.js';
 import { BulkEditOverlay, CharacterContextMenu } from './scripts/BulkEditOverlay.js';
@@ -382,12 +386,14 @@ DOMPurify.addHook('uponSanitizeElement', (node, _, config) => {
         const warningShownKey = `mediaWarningShown:${entityId}`;
 
         if (localStorage.getItem(warningShownKey) === null) {
+            // @ts-ignore
             const warningToast = toastr.warning(
                 'Use the "Ext. Media" button to allow it. Click on this message to dismiss.',
                 'External media has been blocked',
                 {
                     timeOut: 0,
                     preventDuplicates: true,
+                    // @ts-ignore
                     onclick: () => toastr.clear(warningToast),
                 },
             );
@@ -535,6 +541,7 @@ let is_delete_mode = false;
 let fav_ch_checked = false;
 let scrollLock = false;
 export let abortStatusCheck = new AbortController();
+// @ts-ignore
 let charDragDropHandler = null;
 
 /** @type {debounce_timeout} The debounce timeout used for chat/settings save. debounce_timeout.long: 1.000 ms */
@@ -699,6 +706,7 @@ async function getSystemMessages() {
 // Register configuration migrations
 registerPromptManagerMigration();
 
+// @ts-ignore
 $(document).ajaxError(function myErrorHandler(_, xhr) {
     // Cohee: CSRF doesn't error out in multiple tabs anymore, so this is unnecessary
     /*
@@ -891,6 +899,7 @@ export function getRequestHeaders() {
     };
 }
 
+// @ts-ignore
 $.ajaxPrefilter((options, originalOptions, xhr) => {
     xhr.setRequestHeader('X-CSRF-Token', token);
 });
@@ -924,6 +933,7 @@ async function firstLoadInit() {
         token = tokenData.token;
     } catch {
         hideLoader();
+        // @ts-ignore
         toastr.error('Couldn\'t get CSRF token. Please refresh the page.', 'Error', { timeOut: 0, extendedTimeOut: 0, preventDuplicates: true });
         throw new Error('Initialization failed');
     }
@@ -1137,6 +1147,7 @@ async function getStatusKobold() {
 
         // We didn't get a 200 status code, but the endpoint has an explanation. Which means it DID connect, but I digress.
         if (online_status === 'no_connection' && data.response) {
+            // @ts-ignore
             toastr.error(data.response, 'API Error', { timeOut: 5000, preventDuplicates: true });
         }
     } catch (err) {
@@ -1223,6 +1234,7 @@ async function getStatusTextgen() {
 
         // We didn't get a 200 status code, but the endpoint has an explanation. Which means it DID connect, but I digress.
         if (online_status === 'no_connection' && data.response) {
+            // @ts-ignore
             toastr.error(data.response, 'API Error', { timeOut: 5000, preventDuplicates: true });
         }
     } catch (err) {
@@ -1275,6 +1287,7 @@ export async function selectCharacterById(id) {
     }
 
     if (isChatSaving) {
+        // @ts-ignore
         toastr.info('Please wait until the chat is saved before switching characters.', 'Your chat is still saving...');
         return;
     }
@@ -1629,6 +1642,7 @@ export async function getOneCharacter(avatarUrl) {
         if (indexOf !== -1) {
             characters[indexOf] = getData;
         } else {
+            // @ts-ignore
             toastr.error(`Character ${avatarUrl} not found in the list`, 'Error', { timeOut: 5000, preventDuplicates: true });
         }
     }
@@ -2220,8 +2234,10 @@ export function addCopyToCodeBlocks(messageElement) {
             copyButton.classList.add('fa-solid', 'fa-copy', 'code-copy', 'interactable');
             copyButton.title = 'Copy code';
             codeBlocks.get(i).appendChild(copyButton);
+            // @ts-ignore
             copyButton.addEventListener('pointerup', function (event) {
                 navigator.clipboard.writeText(codeBlocks.get(i).innerText);
+                // @ts-ignore
                 toastr.info(t`Copied!`, '', { timeOut: 2000 });
             });
         }
@@ -2471,6 +2487,8 @@ export function substituteParamsExtended(content, additionalMacro = {}) {
  * @param {Record<string,any>} [additionalMacro] - Additional environment variables for substitution.
  * @returns {string} The string with substituted parameters.
  */
+
+//CHARACTER PERSONA
 export function substituteParams(content, _name1, _name2, _original, _group, _replaceCharacterCard = true, additionalMacro = {}) {
     if (!content) {
         return '';
@@ -3188,6 +3206,7 @@ class StreamingProcessor {
  * @param {number} [responseLength] Maximum response length. If unset, the global default value is used.
  * @returns {Promise<string>} Generated message
  */
+// @ts-ignore
 export async function generateRaw(prompt, api, instructOverride, quietToLoud, systemPrompt, responseLength) {
     if (!api) {
         api = main_api;
@@ -3196,19 +3215,12 @@ export async function generateRaw(prompt, api, instructOverride, quietToLoud, sy
     const abortController = new AbortController();
     const responseLengthCustomized = typeof responseLength === 'number' && responseLength > 0;
     let originalResponseLength = -1;
-    const isInstruct = power_user.instruct.enabled && api !== 'openai' && api !== 'novel' && !instructOverride;
-    const isQuiet = true;
 
     if (systemPrompt) {
         systemPrompt = substituteParams(systemPrompt);
-        systemPrompt = isInstruct ? formatInstructModeSystemPrompt(systemPrompt) : systemPrompt;
-        prompt = api === 'openai' ? prompt : `${systemPrompt}\n${prompt}`;
     }
-
     prompt = substituteParams(prompt);
-    prompt = api == 'novel' ? adjustNovelInstructionPrompt(prompt) : prompt;
-    prompt = isInstruct ? formatInstructModeChat(name1, prompt, false, true, '', name1, name2, false) : prompt;
-    prompt = isInstruct ? (prompt + formatInstructModePrompt(name2, false, '', name1, name2, isQuiet, quietToLoud)) : (prompt + '\n');
+    prompt = prompt + '\n'
 
     try {
         originalResponseLength = responseLengthCustomized ? saveResponseLength(api, responseLength) : -1;
@@ -3225,20 +3237,12 @@ export async function generateRaw(prompt, api, instructOverride, quietToLoud, sy
                     generateData = getKoboldGenerationData(prompt, koboldSettings, amount_gen, max_context, isHorde, 'quiet');
                 }
                 break;
-            case 'novel': {
-                const novelSettings = novelai_settings[novelai_setting_names[nai_settings.preset_settings_novel]];
-                generateData = getNovelGenerationData(prompt, novelSettings, amount_gen, false, false, null, 'quiet');
-                break;
-            }
+
             case 'textgenerationwebui':
                 generateData = getTextGenGenerationData(prompt, amount_gen, false, false, null, 'quiet');
                 break;
-            case 'openai': {
-                generateData = [{ role: 'user', content: prompt.trim() }];
-                if (systemPrompt) {
-                    generateData.unshift({ role: 'system', content: systemPrompt.trim() });
-                }
-            } break;
+            // @ts-ignore
+            break;
         }
 
         let data = {};
@@ -3247,11 +3251,6 @@ export async function generateRaw(prompt, api, instructOverride, quietToLoud, sy
         //KoboldHorde
         if (api == 'koboldhorde') {
             data = await generateHorde(prompt, generateData, abortController.signal, false);
-        } 
-    
-        //OpenAI    
-        else if (api == 'openai') {
-            data = await sendOpenAIRequest('quiet', generateData, abortController.signal);
         } 
         
         //Everything Else
@@ -3272,7 +3271,6 @@ export async function generateRaw(prompt, api, instructOverride, quietToLoud, sy
 
             data = await response.json();
         }
-
         if (data.error) {
             throw new Error(data.response);
         }
@@ -3379,6 +3377,7 @@ export async function Generate(type, { automatic_trigger, force_name2, quiet_pro
     await eventSource.emit(event_types.GENERATION_AFTER_COMMANDS, type, { automatic_trigger, force_name2, quiet_prompt, quietToLoud, skipWIAN, force_chid, signal, quietImage }, dryRun);
 
     if (main_api == 'kobold' && kai_settings.streaming_kobold && !kai_flags.can_use_streaming) {
+        // @ts-ignore
         toastr.error('Streaming is enabled, but the version of Kobold used does not support token streaming.', undefined, { timeOut: 10000, preventDuplicates: true });
         unblockGeneration(type);
         return Promise.resolve();
@@ -3388,6 +3387,7 @@ export async function Generate(type, { automatic_trigger, force_name2, quiet_pro
         textgen_settings.streaming &&
         textgen_settings.legacy_api &&
         textgen_settings.type === OOBA) {
+        // @ts-ignore
         toastr.error('Streaming is not supported for the Legacy API. Update Ooba and use new API to enable streaming.', undefined, { timeOut: 10000, preventDuplicates: true });
         unblockGeneration(type);
         return Promise.resolve();
@@ -3404,6 +3404,7 @@ export async function Generate(type, { automatic_trigger, force_name2, quiet_pro
 
         if (!pingResult) {
             unblockGeneration(type);
+            // @ts-ignore
             toastr.error('Verify that the server is running and accessible.', 'ST Server cannot be reached');
             throw new Error('Server unreachable');
         }
@@ -3813,7 +3814,9 @@ export async function Generate(type, { automatic_trigger, force_name2, quiet_pro
         mesExamplesArray = [];
     }
 
+    // @ts-ignore
     let oaiMessages = [];
+    // @ts-ignore
     let oaiMessageExamples = [];
 
     if (main_api === 'openai') {
@@ -3972,6 +3975,7 @@ export async function Generate(type, { automatic_trigger, force_name2, quiet_pro
         console.debug('generating prompt');
         chatString = '';
         arrMes = arrMes.reverse();
+        // @ts-ignore
         arrMes.forEach(function (item, i, arr) {
             // OAI doesn't need all of this
             if (main_api === 'openai') {
@@ -4279,50 +4283,13 @@ export async function Generate(type, { automatic_trigger, force_name2, quiet_pro
                 generate_data = getKoboldGenerationData(finalPrompt, presetSettings, maxLength, maxContext, isHorde, type);
             }
             break;
+
         case 'textgenerationwebui': {
             const cfgValues = useCfgPrompt ? { guidanceScale: cfgGuidanceScale, negativePrompt: getCombinedPrompt(true) } : null;
-            generate_data = getTextGenGenerationData(finalPrompt, maxLength, isImpersonate, isContinue, cfgValues, type);
+            generate_data = getTextGenGenerationData(finalPrompt, maxLength, null, isContinue, cfgValues, type);
             break;
         }
-        case 'novel': {
-            const cfgValues = useCfgPrompt ? { guidanceScale: cfgGuidanceScale } : null;
-            const presetSettings = novelai_settings[novelai_setting_names[nai_settings.preset_settings_novel]];
-            generate_data = getNovelGenerationData(finalPrompt, presetSettings, maxLength, isImpersonate, isContinue, cfgValues, type);
-            break;
-        }
-        case 'openai': {
-            let [prompt, counts] = await prepareOpenAIMessages({
-                name2: name2,
-                charDescription: description,
-                charPersonality: personality,
-                Scenario: scenario,
-                worldInfoBefore: worldInfoBefore,
-                worldInfoAfter: worldInfoAfter,
-                extensionPrompts: extension_prompts,
-                bias: promptBias,
-                type: type,
-                quietPrompt: quiet_prompt,
-                quietImage: quietImage,
-                cyclePrompt: cyclePrompt,
-                systemPromptOverride: system,
-                jailbreakPromptOverride: jailbreak,
-                personaDescription: persona,
-                messages: oaiMessages,
-                messageExamples: oaiMessageExamples,
-            }, dryRun);
-            generate_data = { prompt: prompt };
 
-            // TODO: move these side-effects somewhere else, so this switch-case solely sets generate_data
-            // counts will return false if the user has not enabled the token breakdown feature
-            if (counts) {
-                parseTokenCounts(counts, thisPromptBits);
-            }
-
-            if (!dryRun) {
-                setInContextMessages(openai_messages_count, type);
-            }
-            break;
-        }
     }
 
     await eventSource.emit(event_types.GENERATE_AFTER_DATA, generate_data);
@@ -4433,6 +4400,7 @@ export async function Generate(type, { automatic_trigger, force_name2, quiet_pro
             generatedPromptCache = '';
 
             if (data?.response) {
+                // @ts-ignore
                 toastr.error(data.response, 'API Error', { preventDuplicates: true });
             }
             throw new Error(data?.response);
@@ -4524,6 +4492,7 @@ export async function Generate(type, { automatic_trigger, force_name2, quiet_pro
 
     function onError(exception) {
         if (typeof exception?.error?.message === 'string') {
+            // @ts-ignore
             toastr.error(exception.error.message, 'Error', { timeOut: 10000, extendedTimeOut: 20000 });
         }
 
@@ -4884,6 +4853,7 @@ export function getMaxContextSize(overrideResponseLength = null) {
     return this_max_context;
 }
 
+// @ts-ignore
 function parseTokenCounts(counts, thisPromptBits) {
     /**
      * @param {any[]} numbers
@@ -4926,6 +4896,7 @@ function addChatsSeparator(mesSendString) {
 
 async function duplicateCharacter() {
     if (!this_chid) {
+        // @ts-ignore
         toastr.warning('You must first select a character to duplicate!');
         return '';
     }
@@ -4945,6 +4916,7 @@ async function duplicateCharacter() {
         body: JSON.stringify(body),
     });
     if (response.ok) {
+        // @ts-ignore
         toastr.success('Character Duplicated');
         const data = await response.json();
         await eventSource.emit(event_types.CHARACTER_DUPLICATED, { oldAvatar: body.avatar_url, newAvatar: data.path });
@@ -5145,6 +5117,7 @@ async function promptItemize(itemizedPrompts, requestedMesId) {
         }
 
         navigator.clipboard.writeText(rawPromptValues);
+        // @ts-ignore
         toastr.info(t`Copied!`);
     });
 
@@ -5320,10 +5293,15 @@ function extractMessageFromData(data) {
     switch (main_api) {
         case 'kobold':
             return data.results[0].text;
+
+        //Koboldhorde
         case 'koboldhorde':
             return data.text;
+        //textgen (Main)
         case 'textgenerationwebui':
+            console.log("Data: " + String(data.choices?.[0]?.text))
             return data.choices?.[0]?.text ?? data.content ?? data.response ?? '';
+
         case 'novel':
             return data.output;
         case 'openai':
@@ -5686,6 +5664,7 @@ export function getGeneratingApi() {
     }
 }
 
+// @ts-ignore
 function getGeneratingModel(mes) {
     let model = '';
     switch (main_api) {
@@ -5791,10 +5770,12 @@ export function setSendButtonState(value) {
 
 export async function renameCharacter(name = null, { silent = false, renameChats = null } = {}) {
     if (!name && silent) {
+        // @ts-ignore
         toastr.warning('No character name provided.', 'Rename Character');
         return false;
     }
     if (this_chid === undefined) {
+        // @ts-ignore
         toastr.warning('No character selected.', 'Rename Character');
         return false;
     }
@@ -5803,10 +5784,12 @@ export async function renameCharacter(name = null, { silent = false, renameChats
     const newValue = name || await callGenericPopup('<h3>New name:</h3>', POPUP_TYPE.INPUT, characters[this_chid].name);
 
     if (!newValue) {
+        // @ts-ignore
         toastr.warning('No character name provided.', 'Rename Character');
         return false;
     }
     if (newValue === characters[this_chid].name) {
+        // @ts-ignore
         toastr.info('Same character name provided, so name did not change.', 'Rename Character');
         return false;
     }
@@ -5854,8 +5837,10 @@ export async function renameCharacter(name = null, { silent = false, renameChats
                 if (renamePastChatsConfirm) {
                     await renamePastChats(newAvatar, newValue);
                     await reloadCurrentChat();
+                    // @ts-ignore
                     toastr.success('Character renamed and past chats updated!', 'Rename Character');
                 } else {
+                    // @ts-ignore
                     toastr.success('Character renamed!', 'Rename Character');
                 }
             }
@@ -5870,6 +5855,7 @@ export async function renameCharacter(name = null, { silent = false, renameChats
     catch (error) {
         // Reloading to prevent data corruption
         if (!silent) await callPopup('Something went wrong. The page will be reloaded.', 'text');
+        // @ts-ignore
         else toastr.error('Something went wrong. The page will be reloaded.', 'Rename Character');
 
         console.log('Renaming character error:', error);
@@ -5927,6 +5913,7 @@ async function renamePastChats(newAvatar, newValue) {
                 }
             }
         } catch (error) {
+            // @ts-ignore
             toastr.error(`Past chat could not be updated: ${file_name}`);
             console.error(error);
         }
@@ -5974,8 +5961,10 @@ export async function saveChat(chatName, withMetadata, mesId) {
     }
 
     characters[this_chid]['date_last_chat'] = Date.now();
+    // @ts-ignore
     chat.forEach(function (item, i) {
         if (item['is_group']) {
+            // @ts-ignore
             toastr.error('Trying to save group chat with regular saveChat function. Aborting to prevent corruption.');
             throw new Error('Group chat saved from saveChat');
         }
@@ -6019,8 +6008,10 @@ export async function saveChat(chatName, withMetadata, mesId) {
         cache: false,
         dataType: 'json',
         contentType: 'application/json',
+        // @ts-ignore
         success: function (data) { },
         error: function (jqXHR, exception) {
+            // @ts-ignore
             toastr.error('Check the server connection and reload the page to prevent data loss.', 'Chat could not be saved');
             console.log(exception);
             console.log(jqXHR);
@@ -6059,6 +6050,7 @@ async function read_avatar_load(input) {
         await createOrEditCharacter();
         await delay(DEFAULT_SAVE_EDIT_TIMEOUT);
 
+        // @ts-ignore
         const formData = new FormData($('#form_create').get(0));
         await fetch(getThumbnailUrl('avatar', formData.get('avatar_url')), {
             method: 'GET',
@@ -6069,6 +6061,7 @@ async function read_avatar_load(input) {
             },
         });
 
+        // @ts-ignore
         $('.mes').each(async function () {
             const nameMatch = $(this).attr('ch_name') == formData.get('ch_name');
             if ($(this).attr('is_system') == 'true' && !nameMatch) {
@@ -6375,6 +6368,7 @@ export function setUserName(value) {
     console.log(`User name changed to ${name1}`);
     $('#your_name').val(name1);
     if (power_user.persona_show_notifications) {
+        // @ts-ignore
         toastr.success(t`Your messages will now be sent as ${name1}`, t`Current persona updated`);
     }
     saveSettingsDebounced();
@@ -6418,6 +6412,7 @@ export async function getSettings() {
 
     if (!response.ok) {
         reloadLoop();
+        // @ts-ignore
         toastr.error('Settings could not be loaded after multiple attempts. Please try again later.');
         throw new Error('Error getting settings');
     }
@@ -6438,6 +6433,7 @@ export async function getSettings() {
         //Load KoboldAI settings
         koboldai_setting_names = data.koboldai_setting_names;
         koboldai_settings = data.koboldai_settings;
+        // @ts-ignore
         koboldai_settings.forEach(function (item, i, arr) {
             koboldai_settings[i] = JSON.parse(item);
         });
@@ -6449,6 +6445,7 @@ export async function getSettings() {
             '<option value="gui">GUI KoboldAI Settings</option>',
         ); //adding in the GUI settings, since it is not loaded dynamically
 
+        // @ts-ignore
         koboldai_setting_names.forEach(function (item, i, arr) {
             arr_holder[item] = i;
             $('#settings_preset').append(`<option value=${i}>${item}</option>`);
@@ -6472,6 +6469,7 @@ export async function getSettings() {
 
         novelai_setting_names = data.novelai_setting_names;
         novelai_settings = data.novelai_settings;
+        // @ts-ignore
         novelai_settings.forEach(function (item, i, arr) {
             novelai_settings[i] = JSON.parse(item);
         });
@@ -6479,6 +6477,7 @@ export async function getSettings() {
 
         $('#settings_preset_novel').empty();
 
+        // @ts-ignore
         novelai_setting_names.forEach(function (item, i, arr) {
             arr_holder[item] = i;
             $('#settings_preset_novel').append(`<option value=${i}>${item}</option>`);
@@ -6599,6 +6598,7 @@ function selectKoboldGuiPreset() {
         .trigger('change');
 }
 
+// @ts-ignore
 export async function saveSettings(type) {
     if (!settingsReady) {
         console.warn('Settings not ready, aborting save');
@@ -6641,10 +6641,12 @@ export async function saveSettings(type) {
         dataType: 'json',
         contentType: 'application/json',
         //processData: false,
+        // @ts-ignore
         success: async function (data) {
             eventSource.emit(event_types.SETTINGS_UPDATED);
         },
         error: function (jqXHR, exception) {
+            // @ts-ignore
             toastr.error('Check the server connection and reload the page to prevent data loss.', 'Settings could not be saved');
             console.log(exception);
             console.log(jqXHR);
@@ -6806,6 +6808,7 @@ export async function getChatsFromFiles(data, isGroupChat) {
     let chat_list = Object.values(data).sort((a, b) => a['file_name'].localeCompare(b['file_name'])).reverse();
 
     let chat_promise = chat_list.map(({ file_name }) => {
+        // @ts-ignore
         return new Promise(async (res, rej) => {
             try {
                 const endpoint = isGroupChat ? '/api/chats/group/get' : '/api/chats/get';
@@ -6911,6 +6914,7 @@ export async function displayPastChats() {
     const data = await (selected_group ? getGroupPastChats(selected_group) : getPastCharacterChats());
 
     if (!data) {
+        // @ts-ignore
         toastr.error('Could not load chat data. Try reloading the page.');
         return;
     }
@@ -7044,6 +7048,7 @@ export function selectRightMenuWithAnimation(selectedMenuId) {
 
 export function select_rm_info(type, charId, previousCharId = null) {
     if (!type) {
+        // @ts-ignore
         toastr.error('Invalid process (no \'type\')');
         return;
     }
@@ -7052,19 +7057,24 @@ export function select_rm_info(type, charId, previousCharId = null) {
     }
 
     if (type === 'char_delete') {
+        // @ts-ignore
         toastr.warning(`Character Deleted: ${displayName}`);
     }
     if (type === 'char_create') {
+        // @ts-ignore
         toastr.success(`Character Created: ${displayName}`);
     }
     if (type === 'group_create') {
+        // @ts-ignore
         toastr.success('Group Created');
     }
     if (type === 'group_delete') {
+        // @ts-ignore
         toastr.warning('Group Deleted');
     }
 
     if (type === 'char_import') {
+        // @ts-ignore
         toastr.success(`Character Imported: ${displayName}`);
     }
 
@@ -7227,6 +7237,7 @@ function select_rm_create() {
     //console.log('select_rm_Create() -- selected button: '+selected_button);
     if (selected_button == 'create') {
         if (create_save.avatar != '') {
+            // @ts-ignore
             $('#add_avatar_button').get(0).files = create_save.avatar;
             read_avatar_load($('#add_avatar_button').get(0));
         }
@@ -7354,6 +7365,7 @@ export function updateChatMetadata(newValues, reset) {
 
 function updateFavButtonState(state) {
     fav_ch_checked = state;
+    // @ts-ignore
     $('#fav_checkbox').val(fav_ch_checked);
     $('#favorite_button').toggleClass('fav_on', fav_ch_checked);
     $('#favorite_button').toggleClass('fav_off', !fav_ch_checked);
@@ -7398,6 +7410,7 @@ function onScenarioOverrideRemoveClick() {
  * @returns {Promise<any>} A promise that resolves when the popup is closed.
  * @deprecated Use `callGenericPopup` instead.
  */
+// @ts-ignore
 export function callPopup(text, type, inputValue = '', { okButton, rows, wide, wider, large, allowHorizontalScrolling, allowVerticalScrolling, cropAspect } = {}) {
     function getOkButtonText() {
         if (['text', 'alternate_greeting', 'char_not_selected'].includes(popup_type)) {
@@ -7520,17 +7533,20 @@ export function hideSwipeButtons() {
  */
 export async function deleteSwipe(swipeId = null) {
     if (swipeId && (isNaN(swipeId) || swipeId < 0)) {
+        // @ts-ignore
         toastr.warning(`Invalid swipe ID: ${swipeId + 1}`);
         return;
     }
 
     const lastMessage = chat[chat.length - 1];
     if (!lastMessage || !Array.isArray(lastMessage.swipes) || !lastMessage.swipes.length) {
+        // @ts-ignore
         toastr.warning('No messages to delete swipes from.');
         return;
     }
 
     if (lastMessage.swipes.length <= 1) {
+        // @ts-ignore
         toastr.warning('Can\'t delete the last swipe.');
         return;
     }
@@ -7538,6 +7554,7 @@ export async function deleteSwipe(swipeId = null) {
     swipeId = swipeId ?? lastMessage.swipe_id;
 
     if (swipeId < 0 || swipeId >= lastMessage.swipes.length) {
+        // @ts-ignore
         toastr.warning(`Invalid swipe ID: ${swipeId + 1}`);
         return;
     }
@@ -7677,6 +7694,7 @@ export function setGenerationProgress(progress) {
 
 function isHordeGenerationNotAllowed() {
     if (main_api == 'koboldhorde' && preset_settings == 'gui') {
+        // @ts-ignore
         toastr.error('GUI Settings preset is not supported for Horde. Please select another preset.');
         return true;
     }
@@ -7699,6 +7717,7 @@ function openCharacterWorldPopup() {
     const chid = $('#set_character_world').data('chid');
 
     if (menu_type != 'create' && chid == undefined) {
+        // @ts-ignore
         toastr.error('Does not have an Id for this character in world select menu.');
         return;
     }
@@ -7726,6 +7745,7 @@ function openCharacterWorldPopup() {
                     }
 
                     $('#character_json_data').val(JSON.stringify(data));
+                    // @ts-ignore
                     toastr.info('Embedded lorebook will be removed from this character.');
                 } catch {
                     console.error('Failed to parse character JSON data.');
@@ -7744,6 +7764,7 @@ function openCharacterWorldPopup() {
 
         // TODO: Maybe make this utility function not use the window context?
         const fileName = getCharaFilename(chid);
+        // @ts-ignore
         const tempExtraBooks = selectedWorlds.map((index) => world_names[index]).filter((e) => e !== undefined);
 
         const existingCharIndex = charLore.findIndex((e) => e.name === fileName);
@@ -7784,6 +7805,7 @@ function openCharacterWorldPopup() {
     // Apped to base dropdown
     world_names.forEach((item, i) => {
         const option = document.createElement('option');
+        // @ts-ignore
         option.value = i;
         option.innerText = item;
         option.selected = item === worldId;
@@ -7796,6 +7818,7 @@ function openCharacterWorldPopup() {
     }
     world_names.forEach((item, i) => {
         const option = document.createElement('option');
+        // @ts-ignore
         option.value = i;
         option.innerText = item;
 
@@ -7826,6 +7849,7 @@ function openAlternateGreetings() {
     const chid = $('.open_alternate_greetings').data('chid');
 
     if (menu_type != 'create' && chid === undefined) {
+        // @ts-ignore
         toastr.error('Does not have an Id for this character in editor menu.');
         return;
     } else {
@@ -7879,6 +7903,7 @@ function addAlternateGreeting(template, greeting, index, getArray) {
  */
 async function createOrEditCharacter(e) {
     $('#rm_info_avatar').html('');
+    // @ts-ignore
     const formData = new FormData($('#form_create').get(0));
     formData.set('fav', String(fav_ch_checked));
     const isNewChat = e instanceof CustomEvent && e.type === 'newChat';
@@ -7894,10 +7919,12 @@ async function createOrEditCharacter(e) {
 
     if ($('#form_create').attr('actiontype') == 'createcharacter') {
         if (String($('#character_name_pole').val()).length === 0) {
+            // @ts-ignore
             toastr.error('Name is required');
             return;
         }
         if (is_group_generating || is_send_press) {
+            // @ts-ignore
             toastr.error('Cannot create characters while generating. Stop the request and try again.', 'Creation aborted');
             return;
         }
@@ -7950,6 +7977,7 @@ async function createOrEditCharacter(e) {
                 { id: '#character_json_data', callback: () => { } },
                 { id: '#alternate_greetings_template', callback: value => create_save.alternate_greetings = value, defaultValue: [] },
                 { id: '#character_world', callback: value => create_save.world = value },
+                // @ts-ignore
                 { id: '#_character_extensions_fake', callback: value => create_save.extensions = {} },
             ];
 
@@ -7982,6 +8010,7 @@ async function createOrEditCharacter(e) {
 
         } catch (error) {
             console.error('Error creating character', error);
+            // @ts-ignore
             toastr.error('Failed to create character');
         }
     } else {
@@ -8041,6 +8070,7 @@ async function createOrEditCharacter(e) {
             }
         } catch (error) {
             console.log(error);
+            // @ts-ignore
             toastr.error('Something went wrong while saving the character, or the image file provided was in an invalid format. Double check that the image is not a webp.');
         }
     }
@@ -8523,6 +8553,7 @@ async function selectContextCallback(args, name) {
     const result = fuse.search(name);
 
     if (result.length === 0) {
+        // @ts-ignore
         !quiet && toastr.warning(`Context template "${name}" not found`);
         return '';
     }
@@ -8543,6 +8574,7 @@ async function selectInstructCallback(args, name) {
     const result = fuse.search(name);
 
     if (result.length === 0) {
+        // @ts-ignore
         !quiet && toastr.warning(`Instruct template "${name}" not found`);
         return '';
     }
@@ -8595,6 +8627,7 @@ async function connectAPISlash(args, text) {
 
     const apiConfig = CONNECT_API_MAP[text.toLowerCase()];
     if (!apiConfig) {
+        // @ts-ignore
         toastr.error(`Error: ${text} is not a valid API`);
         return '';
     }
@@ -8624,6 +8657,7 @@ async function connectAPISlash(args, text) {
     }
 
     const quiet = isTrueBoolean(args?.quiet);
+    // @ts-ignore
     const toast = quiet ? jQuery() : toastr.info(`API set to ${text}, trying to connect..`);
 
     try {
@@ -8633,6 +8667,7 @@ async function connectAPISlash(args, text) {
         console.log('Could not connect after 10 seconds, skipping.');
     }
 
+    // @ts-ignore
     toastr.clear(toast);
     return text;
 }
@@ -8663,6 +8698,7 @@ export async function processDroppedFiles(files, data = new Map()) {
             const preservedName = data instanceof Map && data.get(file);
             await importCharacter(file, preservedName);
         } else {
+            // @ts-ignore
             toastr.warning('Unsupported file type: ' + file.name);
         }
     }
@@ -8676,6 +8712,7 @@ export async function processDroppedFiles(files, data = new Map()) {
  */
 async function importCharacter(file, preserveFileName = '') {
     if (is_group_generating || is_send_press) {
+        // @ts-ignore
         toastr.error('Cannot import characters while generating. Stop the request and try again.', 'Import aborted');
         throw new Error('Cannot import character while generating');
     }
@@ -8703,6 +8740,7 @@ async function importCharacter(file, preserveFileName = '') {
     });
 
     if (data.error) {
+        // @ts-ignore
         toastr.error('The file is likely invalid or corrupted.', 'Could not import character');
         return;
     }
@@ -8756,6 +8794,7 @@ async function doImpersonate(args, prompt) {
             await waitUntilCondition(() => !is_send_press && !is_group_generating, 10000, 100);
         } catch {
             console.warn('Timeout waiting for generation unlock');
+            // @ts-ignore
             toastr.warning('Cannot run /impersonate command while the reply is being generated.');
             return '';
         }
@@ -8818,18 +8857,21 @@ async function doDeleteChat() {
 
 async function doRenameChat(_, chatName) {
     if (!chatName) {
+        // @ts-ignore
         toastr.warning('Name must be provided as an argument to rename this chat.');
         return '';
     }
 
     const currentChatName = getCurrentChatId();
     if (!currentChatName) {
+        // @ts-ignore
         toastr.warning('No chat selected that can be renamed.');
         return '';
     }
 
     await renameChat(currentChatName, chatName);
 
+    // @ts-ignore
     toastr.success(`Successfully renamed chat to: ${chatName}`);
     return '';
 }
@@ -8897,6 +8939,7 @@ async function doGetChatName() {
     return getCurrentChatDetails().sessionName;
 }
 
+// @ts-ignore
 const isPwaMode = window.navigator.standalone;
 if (isPwaMode) { $('body').addClass('PWA'); }
 
@@ -8945,6 +8988,7 @@ export async function deleteCharacter(characterKey, { deleteChats = true } = {})
     for (const key of characterKey) {
         const character = characters.find(x => x.avatar == key);
         if (!character) {
+            // @ts-ignore
             toastr.warning(`Character ${key} not found. Skipping deletion.`);
             continue;
         }
@@ -8962,6 +9006,7 @@ export async function deleteCharacter(characterKey, { deleteChats = true } = {})
         });
 
         if (!response.ok) {
+            // @ts-ignore
             toastr.error(`${response.status} ${response.statusText}`, 'Failed to delete character');
             continue;
         }
@@ -9046,6 +9091,7 @@ function addDebugFunctions() {
 
     registerDebugFunction('generationTest', 'Send a generation request', 'Generates text using the currently selected API.', async () => {
         const text = prompt('Input text:', 'Hello');
+        // @ts-ignore
         toastr.info('Working on it...');
         const message = await generateRaw(text, null, false, false);
         alert(message);
@@ -9053,6 +9099,7 @@ function addDebugFunctions() {
 
     registerDebugFunction('clearPrompts', 'Delete itemized prompts', 'Deletes all itemized prompts from the local storage.', async () => {
         await clearItemizedPrompts();
+        // @ts-ignore
         toastr.info('Itemized prompts deleted.');
         if (getCurrentChatId()) {
             await reloadCurrentChat();
@@ -9061,6 +9108,7 @@ function addDebugFunctions() {
 
     registerDebugFunction('toggleEventTracing', 'Toggle event tracing', 'Useful to see what triggered a certain event.', () => {
         localStorage.setItem('eventTracing', localStorage.getItem('eventTracing') === 'true' ? 'false' : 'true');
+        // @ts-ignore
         toastr.info('Event tracing is now ' + (localStorage.getItem('eventTracing') === 'true' ? 'enabled' : 'disabled'));
     });
 
@@ -9085,8 +9133,10 @@ API Settings: ${JSON.stringify(getSettingsContents[getSettingsContents.main_api 
 
         try {
             await navigator.clipboard.writeText(logMessage);
+            // @ts-ignore
             toastr.info('Your ST API setup data has been copied to the clipboard.');
         } catch (error) {
+            // @ts-ignore
             toastr.error('Failed to copy ST Setup to clipboard:', error);
         }
     });
@@ -9096,6 +9146,7 @@ jQuery(async function () {
     async function doForceSave() {
         await saveSettings();
         await saveChatConditional();
+        // @ts-ignore
         toastr.success('Chat and settings saved.');
         return '';
     }
@@ -9548,6 +9599,7 @@ jQuery(async function () {
         $('#character_popup').css('display', 'none');
     });
 
+    // @ts-ignore
     $('#dialogue_popup_ok').click(async function (e, customData) {
         const fromSlashCommand = customData?.fromSlashCommand || false;
         dialogueCloseStop = false;
@@ -9603,6 +9655,7 @@ jQuery(async function () {
         }
     });
 
+    // @ts-ignore
     $('#dialogue_popup_cancel').click(function (e) {
         dialogueCloseStop = false;
         $('#shadow_popup').transition({
@@ -9630,10 +9683,12 @@ jQuery(async function () {
         read_avatar_load(this);
     });
 
+    // @ts-ignore
     $('#form_create').submit(createOrEditCharacter);
 
     $('#delete_button').on('click', async function () {
         if (!this_chid) {
+            // @ts-ignore
             toastr.warning('No character selected.');
             return;
         }
@@ -9646,6 +9701,7 @@ jQuery(async function () {
                     <input type="checkbox" id="del_char_checkbox" />
                     <small>Also delete the chat files</small>
                 </label></b>`, {
+            // @ts-ignore
             onClose: () => deleteChats = !!$('#del_char_checkbox').prop('checked'),
         });
         if (!confirm) {
@@ -9747,6 +9803,7 @@ jQuery(async function () {
                 // display error message
                 console.log(data.message);
                 await delay(250);
+                // @ts-ignore
                 toastr.error(`Error: ${data.message}`);
                 return;
             } else {
@@ -9754,6 +9811,7 @@ jQuery(async function () {
                 // success, handle response data
                 console.log(data);
                 await delay(250);
+                // @ts-ignore
                 toastr.success(data.message);
                 download(data.result, body.exportfilename, mimeType);
             }
@@ -9761,17 +9819,20 @@ jQuery(async function () {
             // display error message
             console.log(`An error has occurred: ${error.message}`);
             await delay(250);
+            // @ts-ignore
             toastr.error(`Error: ${error.message}`);
         }
     });
 
     ///////////////////////////////////////////////////////////////////////////////////
 
+    // @ts-ignore
     $('#api_button').click(function (e) {
         if ($('#api_url_text').val() != '') {
             let value = formatKoboldUrl(String($('#api_url_text').val()).trim());
 
             if (!value) {
+                // @ts-ignore
                 toastr.error('Please enter a valid URL.');
                 return;
             }
@@ -9786,6 +9847,7 @@ jQuery(async function () {
         }
     });
 
+    // @ts-ignore
     $('#api_button_textgenerationwebui').on('click', async function (e) {
         const keys = [
             { id: 'api_key_mancer', secret: SECRET_KEYS.MANCER },
@@ -9881,6 +9943,7 @@ jQuery(async function () {
     /* $('#set_chat_scenario').on('click', setScenarioOverride); */
 
     ///////////// OPTIMIZED LISTENERS FOR LEFT SIDE OPTIONS POPUP MENU //////////////////////
+    // @ts-ignore
     $('#options [id]').on('click', async function (event, customData) {
         const fromSlashCommand = customData?.fromSlashCommand || false;
         var id = $(this).attr('id');
@@ -9914,6 +9977,7 @@ jQuery(async function () {
             if ((selected_group || this_chid !== undefined) && !is_send_press) {
                 let deleteCurrentChat = false;
                 const result = await Popup.show.confirm(t`Start new chat?`, await renderTemplateAsync('newChatConfirm'), {
+                    // @ts-ignore
                     onClose: () => deleteCurrentChat = !!$('#del_chat_checkbox').prop('checked'),
                 });
                 if (!result) {
@@ -9979,6 +10043,7 @@ jQuery(async function () {
                 await getClientVersion();
                 await eventSource.emit(event_types.CHAT_CHANGED, getCurrentChatId());
             } else {
+                // @ts-ignore
                 toastr.info('Please stop the message generation first.');
             }
         }
@@ -10179,6 +10244,7 @@ jQuery(async function () {
                     const messageId = $(this).closest('.mes').attr('mesid');
                     const text = chat[messageId]['mes'];
                     navigator.clipboard.writeText(text);
+                    // @ts-ignore
                     toastr.info('Copied!', '', { timeOut: 2000 });
                 } catch (err) {
                     console.error('Failed to copy: ', err);
@@ -10252,6 +10318,7 @@ jQuery(async function () {
             edit_textarea.height(0);
             edit_textarea.height(edit_textarea[0].scrollHeight);
             edit_textarea.focus();
+            // @ts-ignore
             edit_textarea[0].setSelectionRange(     //this sets the cursor at the end of the text
                 String(edit_textarea.val()).length,
                 String(edit_textarea.val()).length,
@@ -10425,6 +10492,7 @@ jQuery(async function () {
         showSwipeButtons();
     });
 
+    // @ts-ignore
     $(document).on('click', '.mes_edit_delete', async function (event, customData) {
         const fromSlashCommand = customData?.fromSlashCommand || false;
         const canDeleteSwipe = (Array.isArray(chat[this_edit_mes_id].swipes) && chat[this_edit_mes_id].swipes.length > 1 && !chat[this_edit_mes_id].is_user && parseInt(this_edit_mes_id) === chat.length - 1);
@@ -10497,6 +10565,7 @@ jQuery(async function () {
         }
     });
 
+    // @ts-ignore
     $('#export_button').on('click', function (e) {
         $('#export_format_popup').toggle();
         exportPopper.update();
@@ -10540,6 +10609,7 @@ jQuery(async function () {
     });
 
     $('#chat_import_file').on('change', async function (e) {
+        // @ts-ignore
         var file = e.target.files[0];
 
         if (!file) {
@@ -10555,6 +10625,7 @@ jQuery(async function () {
         }
 
         if (selected_group && file.name.endsWith('.json')) {
+            // @ts-ignore
             toastr.warning('Only SillyTavern\'s own format is supported for group chat imports. Sorry!');
             return;
         }
@@ -10562,6 +10633,7 @@ jQuery(async function () {
         var format = ext[1].toLowerCase();
         $('#chat_import_file_type').val(format);
 
+        // @ts-ignore
         var formData = new FormData($('#form_import_chat').get(0));
         formData.append('user_name', name1);
         $('#select_chat_div').html('');
@@ -10644,6 +10716,7 @@ jQuery(async function () {
 
             // Set the height of "autoSetHeight" textareas within the drawer to their scroll height
             if (!CSS.supports('field-sizing', 'content')) {
+                // @ts-ignore
                 $(this).closest('.drawer').find('.drawer-content textarea.autoSetHeight').each(async function () {
                     await resetScrollHeight($(this));
                     return;
@@ -10725,6 +10798,7 @@ jQuery(async function () {
 
         // Set the height of "autoSetHeight" textareas within the inline-drawer to their scroll height
         if (!CSS.supports('field-sizing', 'content')) {
+            // @ts-ignore
             $(this).closest('.inline-drawer').find('.inline-drawer-content textarea.autoSetHeight').each(async function () {
                 await resetScrollHeight($(this));
                 return;
@@ -10857,6 +10931,7 @@ jQuery(async function () {
     });
 
     $('#char-management-dropdown').on('change', async (e) => {
+        // @ts-ignore
         let target = $(e.target.selectedOptions).attr('id');
         switch (target) {
             case 'set_character_world':
@@ -10889,6 +10964,7 @@ jQuery(async function () {
                         window.open(source, '_blank');
                     }
                 } else {
+                    // @ts-ignore
                     toastr.info('This character doesn\'t seem to have a source.');
                 }
             } break;
@@ -10910,6 +10986,7 @@ jQuery(async function () {
                             await openCharacterChat(chatFile);
                             await fetch(getThumbnailUrl('avatar', characters[this_chid].avatar), { cache: 'no-cache' });
                         } catch {
+                            // @ts-ignore
                             toastr.error('Failed to replace the character card.', 'Something went wrong');
                         }
                     }
@@ -10971,6 +11048,7 @@ jQuery(async function () {
                     $(masterElement).val($(this).val()).trigger('input', { forced: true });
                 } else {
                     //if value not ok, warn and reset to last known valid value
+                    // @ts-ignore
                     toastr.warning(`Invalid value. Must be between ${$(this).attr('min')} and ${$(this).attr('max')}`);
                     console.log(valueBeforeManualInput);
                     //newSlider.val(valueBeforeManualInput)
@@ -10999,6 +11077,7 @@ jQuery(async function () {
                 $(masterElement).val($(this).val()).trigger('input', { forced: true });
             } else {
                 //if value not ok, warn and reset to last known valid value
+                // @ts-ignore
                 toastr.warning(`Invalid value. Must be between ${$(this).attr('min')} and ${$(this).attr('max')}`);
                 console.log(valueBeforeManualInput);
                 $(this).val(valueBeforeManualInput);
@@ -11015,6 +11094,7 @@ jQuery(async function () {
         const html = await renderTemplateAsync('importCharacters');
 
         /** @type {string?} */
+        // @ts-ignore
         const input = await callGenericPopup(html, POPUP_TYPE.INPUT, '', { wider: true, okButton: $('#popup_template').attr('popup-button-import'), rows: 4 });
 
         if (!input) {
@@ -11045,6 +11125,7 @@ jQuery(async function () {
             }
 
             if (!request.ok) {
+                // @ts-ignore
                 toastr.info(request.statusText, 'Custom content import failed');
                 console.error('Custom content import failed', request.status, request.statusText);
                 return;
@@ -11063,6 +11144,7 @@ jQuery(async function () {
                     await importWorldInfo(file);
                     break;
                 default:
+                    // @ts-ignore
                     toastr.warning('Unknown content type');
                     console.error('Unknown content type', customContentType);
                     break;

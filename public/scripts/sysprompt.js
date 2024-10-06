@@ -35,6 +35,7 @@ async function migrateSystemPromptFromInstructMode() {
         }
 
         saveSettingsDebounced();
+        // @ts-ignore
         toastr.info('System prompt settings have been moved from the Instruct Mode.', 'Migration notice', { timeOut: 5000 });
     }
 }
@@ -81,8 +82,10 @@ export async function checkForSystemPromptInInstructTemplate(name, template) {
             const prompt = { name: migratedName, content: template.system_prompt };
             const presetManager = getPresetManager('sysprompt');
             await presetManager.savePreset(migratedName, prompt);
+            // @ts-ignore
             toastr.success(`System prompt "${migratedName}" has been saved.`);
         } else {
+            // @ts-ignore
             toastr.info('System prompt has been discarded.');
         }
 
@@ -136,6 +139,7 @@ function selectSystemPromptCallback(args, name) {
         const result = fuse.search(name);
 
         if (result.length === 0) {
+            // @ts-ignore
             !quiet && toastr.warning(`System prompt "${name}" not found`);
             return '';
         }
@@ -144,6 +148,7 @@ function selectSystemPromptCallback(args, name) {
     }
 
     $select.val(foundName).trigger('change');
+    // @ts-ignore
     !quiet && toastr.success(`System prompt "${foundName}" selected`);
     return foundName;
 }

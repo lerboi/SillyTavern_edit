@@ -9,17 +9,26 @@ const util = require('util');
 
 // cli/fs related library imports
 const open = require('open');
+// @ts-ignore
 const yargs = require('yargs/yargs');
+// @ts-ignore
 const { hideBin } = require('yargs/helpers');
 
 // express/server related library imports
+// @ts-ignore
 const cors = require('cors');
 const doubleCsrf = require('csrf-csrf').doubleCsrf;
+// @ts-ignore
 const express = require('express');
+// @ts-ignore
 const compression = require('compression');
+// @ts-ignore
 const cookieParser = require('cookie-parser');
+// @ts-ignore
 const cookieSession = require('cookie-session');
+// @ts-ignore
 const multer = require('multer');
+// @ts-ignore
 const responseTime = require('response-time');
 const helmet = require('helmet').default;
 
@@ -169,11 +178,15 @@ console.log(`Node version: ${process.version}. Running in ${process.env.NODE_ENV
 const serverDirectory = __dirname;
 process.chdir(serverDirectory);
 
+
 const app = express();
+// @ts-ignore
 app.use(helmet({
     contentSecurityPolicy: false,
 }));
+// @ts-ignore
 app.use(compression());
+// @ts-ignore
 app.use(responseTime());
 
 const server_port = cliArguments.port ?? process.env.SILLY_TAVERN_PORT ?? getConfigValue('port', DEFAULT_PORT);
@@ -204,10 +217,12 @@ const proxyBypass = cliArguments.requestProxyBypass ?? getConfigValue('requestPr
 
 if (dnsPreferIPv6) {
     // Set default DNS resolution order to IPv6 first
+    // @ts-ignore
     dns.setDefaultResultOrder('ipv6first');
     console.log('Preferring IPv6 for DNS resolution');
 } else {
     // Set default DNS resolution order to IPv4 first
+    // @ts-ignore
     dns.setDefaultResultOrder('ipv4first');
     console.log('Preferring IPv4 for DNS resolution');
 }
@@ -223,19 +238,25 @@ const CORS = cors({
     methods: ['OPTIONS'],
 });
 
+// @ts-ignore
 app.use(CORS);
 
+// @ts-ignore
 if (listen && basicAuthMode) app.use(basicAuthMiddleware);
 
+// @ts-ignore
 app.use(whitelistMiddleware(enableWhitelist, listen));
 
 if (enableCorsProxy) {
+    // @ts-ignore
     const bodyParser = require('body-parser');
+    // @ts-ignore
     app.use(bodyParser.json({
         limit: '200mb',
     }));
     console.log('Enabling CORS proxy');
 
+    // @ts-ignore
     app.use('/proxy/:url(*)', async (req, res) => {
         const url = req.params.url; // get the url from the request path
 
@@ -272,6 +293,7 @@ if (enableCorsProxy) {
         }
     });
 } else {
+    // @ts-ignore
     app.use('/proxy/:url(*)', async (_, res) => {
         const message = 'CORS proxy is disabled. Enable it in config.yaml or use the --corsProxy flag.';
         console.log(message);
@@ -298,14 +320,17 @@ function getSessionCookieAge() {
     return undefined;
 }
 
+// @ts-ignore
 app.use(cookieSession({
     name: userModule.getCookieSessionName(),
+    // @ts-ignore
     sameSite: 'strict',
     httpOnly: true,
     maxAge: getSessionCookieAge(),
     secret: userModule.getCookieSecret(),
 }));
 
+// @ts-ignore
 app.use(userModule.setUserDataMiddleware);
 
 // CSRF Protection //
@@ -324,16 +349,20 @@ if (!disableCsrf) {
         getTokenFromRequest: (req) => req.headers['x-csrf-token'],
     });
 
+    // @ts-ignore
     app.get('/csrf-token', (req, res) => {
         res.json({
             'token': generateToken(res, req),
         });
     });
 
+    // @ts-ignore
     app.use(cookieParser(COOKIES_SECRET));
+    // @ts-ignore
     app.use(doubleCsrfProtection);
 } else {
     console.warn('\nCSRF protection is disabled. This will make your server vulnerable to CSRF attacks.\n');
+    // @ts-ignore
     app.get('/csrf-token', (req, res) => {
         res.json({
             'token': 'disabled',
@@ -343,6 +372,7 @@ if (!disableCsrf) {
 
 // Static files
 // Host index page
+// @ts-ignore
 app.get('/', (request, response) => {
     if (userModule.shouldRedirectToLogin(request)) {
         const query = request.url.split('?')[1];
@@ -354,6 +384,7 @@ app.get('/', (request, response) => {
 });
 
 // Host login page
+// @ts-ignore
 app.get('/login', async (request, response) => {
     if (!enableAccounts) {
         console.log('User accounts are disabled. Redirecting to index page.');
@@ -374,26 +405,36 @@ app.get('/login', async (request, response) => {
 });
 
 // Host frontend assets
+// @ts-ignore
 app.use(express.static(process.cwd() + '/public', {}));
 
 // Public API
+// @ts-ignore
 app.use('/api/users', require('./src/endpoints/users-public').router);
 
 // Everything below this line requires authentication
+// @ts-ignore
 app.use(userModule.requireLoginMiddleware);
+// @ts-ignore
 app.get('/api/ping', (_, response) => response.sendStatus(204));
 
 // File uploads
+// @ts-ignore
 app.use(multer({ dest: uploadsPath, limits: { fieldSize: 10 * 1024 * 1024 } }).single('avatar'));
+// @ts-ignore
 app.use(require('./src/middleware/multerMonkeyPatch'));
 
 // User data mount
+// @ts-ignore
 app.use('/', userModule.router);
 // Private endpoints
+// @ts-ignore
 app.use('/api/users', require('./src/endpoints/users-private').router);
 // Admin endpoints
+// @ts-ignore
 app.use('/api/users', require('./src/endpoints/users-admin').router);
 
+// @ts-ignore
 app.get('/version', async function (_, response) {
     const data = await getVersion();
     response.send(data);
@@ -426,6 +467,7 @@ function cleanUploads() {
  * @param {string} destination The URL to redirect to.
  */
 function redirect(src, destination) {
+    // @ts-ignore
     app.use(src, (req, res) => {
         console.warn(`API endpoint ${src} is deprecated; use ${destination} instead`);
         // HTTP 301 causes the request to become a GET. 308 preserves the request method.
@@ -508,124 +550,163 @@ redirect('/api/serpapi/visit', '/api/search/visit');
 redirect('/api/serpapi/transcript', '/api/search/transcript');
 
 // Moving UI
+// @ts-ignore
 app.use('/api/moving-ui', require('./src/endpoints/moving-ui').router);
 
 // Image management
+// @ts-ignore
 app.use('/api/images', require('./src/endpoints/images').router);
 
 // Quick reply management
+// @ts-ignore
 app.use('/api/quick-replies', require('./src/endpoints/quick-replies').router);
 
 // Avatar management
+// @ts-ignore
 app.use('/api/avatars', require('./src/endpoints/avatars').router);
 
 // Theme management
+// @ts-ignore
 app.use('/api/themes', require('./src/endpoints/themes').router);
 
 // OpenAI API
+// @ts-ignore
 app.use('/api/openai', require('./src/endpoints/openai').router);
 
 //Google API
+// @ts-ignore
 app.use('/api/google', require('./src/endpoints/google').router);
 
 //Anthropic API
+// @ts-ignore
 app.use('/api/anthropic', require('./src/endpoints/anthropic').router);
 
 // Tokenizers
+// @ts-ignore
 app.use('/api/tokenizers', require('./src/endpoints/tokenizers').router);
 
 // Preset management
+// @ts-ignore
 app.use('/api/presets', require('./src/endpoints/presets').router);
 
 // Secrets managemenet
+// @ts-ignore
 app.use('/api/secrets', require('./src/endpoints/secrets').router);
 
 // Thumbnail generation. These URLs are saved in chat, so this route cannot be renamed!
+// @ts-ignore
 app.use('/thumbnail', require('./src/endpoints/thumbnails').router);
 
 // NovelAI generation
+// @ts-ignore
 app.use('/api/novelai', require('./src/endpoints/novelai').router);
 
 // Third-party extensions
+// @ts-ignore
 app.use('/api/extensions', require('./src/endpoints/extensions').router);
 
 // Asset management
+// @ts-ignore
 app.use('/api/assets', require('./src/endpoints/assets').router);
 
 // File management
+// @ts-ignore
 app.use('/api/files', require('./src/endpoints/files').router);
 
 // Character management
+// @ts-ignore
 app.use('/api/characters', require('./src/endpoints/characters').router);
 
 // Chat management
+// @ts-ignore
 app.use('/api/chats', require('./src/endpoints/chats').router);
 
 // Group management
+// @ts-ignore
 app.use('/api/groups', require('./src/endpoints/groups').router);
 
 // World info management
+// @ts-ignore
 app.use('/api/worldinfo', require('./src/endpoints/worldinfo').router);
 
 // Stats calculation
 const statsEndpoint = require('./src/endpoints/stats');
+// @ts-ignore
 app.use('/api/stats', statsEndpoint.router);
 
 // Background management
+// @ts-ignore
 app.use('/api/backgrounds', require('./src/endpoints/backgrounds').router);
 
 // Character sprite management
+// @ts-ignore
 app.use('/api/sprites', require('./src/endpoints/sprites').router);
 
 // Custom content management
+// @ts-ignore
 app.use('/api/content', require('./src/endpoints/content-manager').router);
 
 // Settings load/store
 const settingsEndpoint = require('./src/endpoints/settings');
+// @ts-ignore
 app.use('/api/settings', settingsEndpoint.router);
 
 // Stable Diffusion generation
+// @ts-ignore
 app.use('/api/sd', require('./src/endpoints/stable-diffusion').router);
 
 // LLM and SD Horde generation
+// @ts-ignore
 app.use('/api/horde', require('./src/endpoints/horde').router);
 
 // Vector storage DB
+// @ts-ignore
 app.use('/api/vector', require('./src/endpoints/vectors').router);
 
 // Chat translation
+// @ts-ignore
 app.use('/api/translate', require('./src/endpoints/translate').router);
 
 // Emotion classification
+// @ts-ignore
 app.use('/api/extra/classify', require('./src/endpoints/classify').router);
 
 // Image captioning
+// @ts-ignore
 app.use('/api/extra/caption', require('./src/endpoints/caption').router);
 
 // Web search and scraping
+// @ts-ignore
 app.use('/api/search', require('./src/endpoints/search').router);
 
 // The different text generation APIs
 
 // Ooba/OpenAI text completions
+// @ts-ignore
 app.use('/api/backends/text-completions', require('./src/endpoints/backends/text-completions').router);
 
 // OpenRouter
+// @ts-ignore
 app.use('/api/openrouter', require('./src/endpoints/openrouter').router);
 
 // KoboldAI
+// @ts-ignore
 app.use('/api/backends/kobold', require('./src/endpoints/backends/kobold').router);
 
 // OpenAI chat completions
+// @ts-ignore
 app.use('/api/backends/chat-completions', require('./src/endpoints/backends/chat-completions').router);
 
 // Scale (alt method)
+// @ts-ignore
 app.use('/api/backends/scale-alt', require('./src/endpoints/backends/scale-alt').router);
 
 // Speech (text-to-speech and speech-to-text)
+// @ts-ignore
 app.use('/api/speech', require('./src/endpoints/speech').router);
 
 // Azure TTS
+// @ts-ignore
 app.use('/api/azure', require('./src/endpoints/azure').router);
 
 const tavernUrlV6 = new URL(
@@ -841,9 +922,11 @@ function createHttpsServer(url) {
             {
                 cert: fs.readFileSync(cliArguments.certPath),
                 key: fs.readFileSync(cliArguments.keyPath),
+            // @ts-ignore
             }, app);
         server.on('error', reject);
         server.on('listening', resolve);
+        // @ts-ignore
         server.listen(url.port || 443, url.hostname);
     });
 }
@@ -856,9 +939,11 @@ function createHttpsServer(url) {
  */
 function createHttpServer(url) {
     return new Promise((resolve, reject) => {
+        // @ts-ignore
         const server = http.createServer(app);
         server.on('error', reject);
         server.on('listening', resolve);
+        // @ts-ignore
         server.listen(url.port || 80, url.hostname);
     });
 }

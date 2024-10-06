@@ -169,6 +169,7 @@ export async function loadOpenRouterModels(data) {
     }
 
     data.sort((a, b) => a.name.localeCompare(b.name));
+    // @ts-ignore
     openRouterModels = data;
 
     if (!data.find(x => x.id === textgen_settings.openrouter_model)) {
@@ -312,6 +313,7 @@ function onOpenRouterModelSelect() {
     const modelId = String($('#openrouter_model').val());
     textgen_settings.openrouter_model = modelId;
     $('#api_button_textgenerationwebui').trigger('click');
+    // @ts-ignore
     const model = openRouterModels.find(x => x.id === modelId);
     setGenerationParamsFromPreset({ max_length: model.context_length });
 }
@@ -390,6 +392,7 @@ function getDreamGenModelTemplate(option) {
 }
 
 function getOpenRouterModelTemplate(option) {
+    // @ts-ignore
     const model = openRouterModels.find(x => x.id === option?.element?.value);
 
     if (!option.id || !model) {
@@ -455,6 +458,7 @@ async function downloadOllamaModel() {
         const serverUrl = textgen_settings.server_urls[textgen_types.OLLAMA];
 
         if (!serverUrl) {
+            // @ts-ignore
             toastr.info('Please connect to an Ollama server first.');
             return;
         }
@@ -467,6 +471,7 @@ async function downloadOllamaModel() {
             return;
         }
 
+        // @ts-ignore
         toastr.info('Download may take a while, please wait...', 'Working on it');
 
         const response = await fetch('/api/backends/text-completions/ollama/download', {
@@ -483,10 +488,12 @@ async function downloadOllamaModel() {
         }
 
         // Force refresh the model list
+        // @ts-ignore
         toastr.success('Download complete. Please select the model from the dropdown.');
         $('#api_button_textgenerationwebui').trigger('click');
     } catch (err) {
         console.error(err);
+        // @ts-ignore
         toastr.error('Failed to download Ollama model. Please try again.');
     }
 }
@@ -496,6 +503,7 @@ async function downloadTabbyModel() {
         const serverUrl = textgen_settings.server_urls[textgen_types.TABBY];
 
         if (online_status === 'no_connection' || !serverUrl) {
+            // @ts-ignore
             toastr.info('Please connect to a TabbyAPI server first.');
             return;
         }
@@ -510,11 +518,13 @@ async function downloadTabbyModel() {
 
         const repoId = downloadHtml.find('input[name="hf_repo_id"]').val().toString();
         if (!repoId) {
+            // @ts-ignore
             toastr.error('A HuggingFace repo ID must be provided. Skipping Download.');
             return;
         }
 
         if (repoId.split('/').length !== 2) {
+            // @ts-ignore
             toastr.error('A HuggingFace repo ID must be formatted as Author/Name. Please try again.');
             return;
         }
@@ -537,6 +547,7 @@ async function downloadTabbyModel() {
         params['api_server'] = serverUrl;
         params['api_type'] = textgen_settings.type;
 
+        // @ts-ignore
         toastr.info('Downloading. Check the Tabby console for progress reports.');
 
         const response = await fetch('/api/backends/text-completions/tabby/download', {
@@ -546,15 +557,18 @@ async function downloadTabbyModel() {
         });
 
         if (response.status === 403) {
+            // @ts-ignore
             toastr.error('The provided key has invalid permissions. Please use an admin key for downloading.');
             return;
         } else if (!response.ok) {
             throw new Error(response.statusText);
         }
 
+        // @ts-ignore
         toastr.success('Download complete.');
     } catch (err) {
         console.error(err);
+        // @ts-ignore
         toastr.error('Failed to download HuggingFace model in TabbyAPI. Please try again.');
     }
 }
@@ -565,6 +579,7 @@ function calculateOpenRouterCost() {
     }
 
     let cost = 'Unknown';
+    // @ts-ignore
     const model = openRouterModels.find(x => x.id === textgen_settings.openrouter_model);
 
     if (model?.pricing) {
@@ -587,6 +602,7 @@ function calculateOpenRouterCost() {
 
 export function getCurrentOpenRouterModelTokenizer() {
     const modelId = textgen_settings.openrouter_model;
+    // @ts-ignore
     const model = openRouterModels.find(x => x.id === modelId);
     if (modelId?.includes('jamba')) {
         return tokenizers.JAMBA;

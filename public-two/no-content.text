@@ -1,3 +1,90 @@
+//GET USER INPUT/PROMPT AND FORMAT IT --> script.js
+function extractMessageFromData(data) {
+    if (typeof data === 'string') {
+        return data;
+    }
+
+    switch (main_api) {
+        case 'kobold':
+            return data.results[0].text;
+
+        //Two main sources
+        case 'koboldhorde':
+            return data.text;
+        case 'textgenerationwebui':
+            return data.choices?.[0]?.text ?? data.content ?? data.response ?? '';
+
+        case 'novel':
+            return data.output;
+        case 'openai':
+            return data?.choices?.[0]?.message?.content ?? data?.choices?.[0]?.text ?? data?.text ?? '';
+        default:
+            return '';
+    }
+}
+
+//WHERE THE CHARACTER PERSONA IS ADDED --> script.js
+export function substituteParams(content, _name1, _name2, _original, _group, _replaceCharacterCard = true, additionalMacro = {}) {
+    if (!content) {
+        return '';
+    }
+
+    const environment = {};
+
+    if (typeof _original === 'string') {
+        let originalSubstituted = false;
+        environment.original = () => {
+            if (originalSubstituted) {
+                return '';
+            }
+
+            originalSubstituted = true;
+            return _original;
+        };
+    }
+
+    const getGroupValue = () => {
+        if (typeof _group === 'string') {
+            return _group;
+        }
+
+        if (selected_group) {
+            const members = groups.find(x => x.id === selected_group)?.members;
+            const names = Array.isArray(members)
+                ? members.map(m => characters.find(c => c.avatar === m)?.name).filter(Boolean).join(', ')
+                : '';
+            return names;
+        } else {
+            return _name2 ?? name2;
+        }
+    };
+
+    if (_replaceCharacterCard) {
+        const fields = getCharacterCardFields();
+        environment.charPrompt = fields.system || '';
+        environment.charJailbreak = fields.jailbreak || '';
+        environment.description = fields.description || '';
+        environment.personality = fields.personality || '';
+        environment.scenario = fields.scenario || '';
+        environment.persona = fields.persona || '';
+        environment.mesExamples = fields.mesExamples || '';
+        environment.charVersion = fields.version || '';
+        environment.char_version = fields.version || '';
+    }
+
+    // Must be substituted last so that they're replaced inside {{description}}
+    environment.user = _name1 ?? name1;
+    environment.char = _name2 ?? name2;
+    environment.group = environment.charIfNotGroup = getGroupValue();
+    environment.model = getGeneratingModel();
+
+    if (additionalMacro && typeof additionalMacro === 'object') {
+        Object.assign(environment, additionalMacro);
+    }
+
+    return evaluateMacros(content, environment);
+}
+
 //AI TEXT GENERATION --> script.js
 export async function generateRaw(prompt, api, instructOverride, quietToLoud, systemPrompt, responseLength) {
     if (!api) {

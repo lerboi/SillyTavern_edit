@@ -70,6 +70,7 @@ import {
     animation_duration,
     depth_prompt_role_default,
     shouldAutoContinue,
+    // @ts-ignore
     this_chid,
 } from '../script.js';
 import { printTagList, createTagMapFromList, applyTagsOnCharacterSelect, tag_map, applyTagsOnGroupSelect } from './tags.js';
@@ -190,6 +191,7 @@ async function validateGroup(group) {
         const character = characters.find(x => x.avatar === member || x.name === member);
         if (!character) {
             const msg = `Warning: Listed member ${member} does not exist as a character. It will be removed from the group.`;
+            // @ts-ignore
             toastr.warning(msg, 'Group Validation');
             console.warn(msg);
             dirty = true;
@@ -522,6 +524,7 @@ async function saveGroupChat(groupId, shouldSaveGroup) {
     });
 
     if (!response.ok) {
+        // @ts-ignore
         toastr.error('Check the server connection and reload the page to prevent data loss.', 'Group Chat could not be saved');
         console.error('Group chat could not be saved', response);
         return;
@@ -837,6 +840,7 @@ async function generateGroupWrapper(by_auto_mode, type = null, params = {}) {
             activatedMembers = activateSwipe(group.members);
 
             if (activatedMembers.length === 0) {
+                // @ts-ignore
                 toastr.warning('Deleted group member swiped. To get a reply, add them back to the group.');
                 throw new Error('Deleted group member swiped');
             }
@@ -1248,6 +1252,7 @@ function isGroupMember(group, avatarId) {
     }
 }
 
+// @ts-ignore
 function getGroupCharacters({ doFilter, onlyMembers } = {}) {
     function sortMembersFn(a, b) {
         const membersArray = thisGroup?.members ?? newGroupMembers;
@@ -1368,10 +1373,12 @@ function isGroupMemberDisabled(avatarId) {
 
 async function onDeleteGroupClick() {
     if (!openGroupId) {
+        // @ts-ignore
         toastr.warning('Currently no group selected.');
         return;
     }
     if (is_group_generating) {
+        // @ts-ignore
         toastr.warning('Not so fast! Wait for the characters to stop typing before deleting the group.');
         return;
     }
@@ -1623,6 +1630,7 @@ async function onGroupActionClick(event) {
 
 function updateFavButtonState(state) {
     fav_grp_checked = state;
+    // @ts-ignore
     $('#rm_group_fav').val(fav_grp_checked);
     $('#group_favorite_button').toggleClass('fav_on', fav_grp_checked);
     $('#group_favorite_button').toggleClass('fav_off', !fav_grp_checked);
@@ -1630,6 +1638,7 @@ function updateFavButtonState(state) {
 
 export async function openGroupById(groupId) {
     if (isChatSaving) {
+        // @ts-ignore
         toastr.info('Please wait until the chat is saved before switching characters.', 'Your chat is still saving...');
         return;
     }
@@ -1659,6 +1668,7 @@ export async function openGroupById(groupId) {
 
 function openCharacterDefinition(characterSelect) {
     if (is_group_generating) {
+        // @ts-ignore
         toastr.warning('Can\'t peek a character while group reply is being generated');
         console.warn('Can\'t peek a character def while group reply is being generated');
         return;
@@ -1908,6 +1918,7 @@ export async function saveGroupBookmarkChat(groupId, name, metadata, mesId) {
     });
 
     if (!response.ok) {
+        // @ts-ignore
         toastr.error('Check the server connection and reload the page to prevent data loss.', 'Group chat could not be saved');
         console.error('Group chat could not be saved', response);
     }

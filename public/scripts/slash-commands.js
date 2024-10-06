@@ -43,7 +43,7 @@ import {
     system_message_types,
     this_chid,
 } from '../script.js';
-import { SlashCommandParser } from './slash-commands/SlashCommandParser.js';
+import { PARSER_FLAG, SlashCommandParser } from './slash-commands/SlashCommandParser.js';
 import { SlashCommandParserError } from './slash-commands/SlashCommandParserError.js';
 import { getMessageTimeStamp } from './RossAscends-mods.js';
 import { hideChatMessageRange } from './chats.js';
@@ -71,6 +71,7 @@ import { commonEnumProviders, enumIcons } from './slash-commands/SlashCommandCom
 import { SlashCommandDebugController } from './slash-commands/SlashCommandDebugController.js';
 import { SlashCommandBreakController } from './slash-commands/SlashCommandBreakController.js';
 import { SlashCommandExecutionError } from './slash-commands/SlashCommandExecutionError.js';
+import { SlashCommandScope } from './slash-commands/SlashCommandScope.js';
 export {
     executeSlashCommands, executeSlashCommandsWithOptions, getSlashCommandsHelp, registerSlashCommand,
 };
@@ -1710,6 +1711,7 @@ function injectCallback(args, value) {
 
     if (!id) {
         console.warn('WARN: No ID provided for /inject command');
+        // @ts-ignore
         toastr.warning('No ID provided for /inject command');
         return '';
     }
@@ -1763,6 +1765,7 @@ function injectCallback(args, value) {
 async function listInjectsCallback(args) {
     const type = String(args?.format).toLowerCase().trim();
     if (!chat_metadata.script_injects || !Object.keys(chat_metadata.script_injects).length) {
+        // @ts-ignore
         type !== 'none' && toastr.info('No script injections for the current chat');
         return JSON.stringify({});
     }
@@ -2262,6 +2265,7 @@ async function generateRawCallback(args, value) {
         return result;
     } catch (err) {
         console.error('Error on /genraw generation', err);
+        // @ts-ignore
         toastr.error(err.message, 'API Error', { preventDuplicates: true });
     } finally {
         if (lock) {
@@ -2297,6 +2301,7 @@ async function generateCallback(args, value) {
         return result;
     } catch (err) {
         console.error('Error on /gen generation', err);
+        // @ts-ignore
         toastr.error(err.message, 'API Error', { preventDuplicates: true });
     } finally {
         if (lock) {
@@ -2321,6 +2326,7 @@ async function echoCallback(args, value) {
     }
 
     if (args.severity && !['error', 'warning', 'success', 'info'].includes(args.severity)) {
+        // @ts-ignore
         toastr.warning(`Invalid severity provided for /echo command: ${args.severity}`);
         args.severity = null;
     }
@@ -2354,6 +2360,7 @@ async function echoCallback(args, value) {
                 await args.onClick.execute();
             };
         } else {
+            // @ts-ignore
             toastr.warning('Invalid onClick provided for /echo command. This is not a closure');
         }
     }
@@ -2367,16 +2374,20 @@ async function echoCallback(args, value) {
     let toast;
     switch (severity) {
         case 'error':
+            // @ts-ignore
             toast = toastr.error(value, title, options);
             break;
         case 'warning':
+            // @ts-ignore
             toast = toastr.warning(value, title, options);
             break;
         case 'success':
+            // @ts-ignore
             toast = toastr.success(value, title, options);
             break;
         case 'info':
         default:
+            // @ts-ignore
             toast = toastr.info(value, title, options);
             break;
     }
@@ -2402,6 +2413,7 @@ async function addSwipeCallback(args, value) {
     const lastMessage = chat[chat.length - 1];
 
     if (!lastMessage) {
+        // @ts-ignore
         toastr.warning('No messages to add swipes to.');
         return '';
     }
@@ -2412,16 +2424,19 @@ async function addSwipeCallback(args, value) {
     }
 
     if (lastMessage.is_user) {
+        // @ts-ignore
         toastr.warning('Can\'t add swipes to user messages.');
         return '';
     }
 
     if (lastMessage.is_system) {
+        // @ts-ignore
         toastr.warning('Can\'t add swipes to system messages.');
         return '';
     }
 
     if (lastMessage.extra?.image) {
+        // @ts-ignore
         toastr.warning('Can\'t add swipes to message containing an image.');
         return '';
     }
@@ -2477,6 +2492,7 @@ async function askCharacter(args, text) {
     // Not supported in group chats
     // TODO: Maybe support group chats?
     if (selected_group) {
+        // @ts-ignore
         toastr.error('Cannot run /ask command in a group chat!');
         return '';
     }
@@ -2487,6 +2503,7 @@ async function askCharacter(args, text) {
         name = args.name.trim();
 
         if (!name) {
+            // @ts-ignore
             toastr.warning('You must specify a name of the character to ask.');
             return '';
         }
@@ -2497,6 +2514,7 @@ async function askCharacter(args, text) {
     // Find the character
     const chId = characters.findIndex((e) => e.name === name || e.avatar === name);
     if (!characters[chId] || chId === -1) {
+        // @ts-ignore
         toastr.error('Character not found.');
         return '';
     }
@@ -2547,6 +2565,7 @@ async function askCharacter(args, text) {
     // Run generate and restore previous character
     try {
         eventSource.once(event_types.MESSAGE_RECEIVED, restoreCharacter);
+        // @ts-ignore
         toastr.info(`Asking ${character.name} something...`);
         askResult = await Generate('ask_command');
     } catch (error) {
@@ -2556,6 +2575,7 @@ async function askCharacter(args, text) {
         if (String(this_chid) === String(prevChId)) {
             await saveChatConditional();
         } else {
+            // @ts-ignore
             toastr.error('It is strongly recommended to reload the page.', 'Something went wrong');
         }
     }
@@ -2631,6 +2651,7 @@ function performGroupMemberAction(chid, action) {
 
 async function disableGroupMemberCallback(_, arg) {
     if (!selected_group) {
+        // @ts-ignore
         toastr.warning('Cannot run /disable command outside of a group chat.');
         return '';
     }
@@ -2648,6 +2669,7 @@ async function disableGroupMemberCallback(_, arg) {
 
 async function enableGroupMemberCallback(_, arg) {
     if (!selected_group) {
+        // @ts-ignore
         toastr.warning('Cannot run /enable command outside of a group chat.');
         return '';
     }
@@ -2665,6 +2687,7 @@ async function enableGroupMemberCallback(_, arg) {
 
 async function moveGroupMemberUpCallback(_, arg) {
     if (!selected_group) {
+        // @ts-ignore
         toastr.warning('Cannot run /memberup command outside of a group chat.');
         return '';
     }
@@ -2682,6 +2705,7 @@ async function moveGroupMemberUpCallback(_, arg) {
 
 async function moveGroupMemberDownCallback(_, arg) {
     if (!selected_group) {
+        // @ts-ignore
         toastr.warning('Cannot run /memberdown command outside of a group chat.');
         return '';
     }
@@ -2699,11 +2723,13 @@ async function moveGroupMemberDownCallback(_, arg) {
 
 async function peekCallback(_, arg) {
     if (!selected_group) {
+        // @ts-ignore
         toastr.warning('Cannot run /peek command outside of a group chat.');
         return '';
     }
 
     if (is_group_generating) {
+        // @ts-ignore
         toastr.warning('Cannot run /peek command while the group reply is generating.');
         return '';
     }
@@ -2721,11 +2747,13 @@ async function peekCallback(_, arg) {
 
 async function removeGroupMemberCallback(_, arg) {
     if (!selected_group) {
+        // @ts-ignore
         toastr.warning('Cannot run /memberremove command outside of a group chat.');
         return '';
     }
 
     if (is_group_generating) {
+        // @ts-ignore
         toastr.warning('Cannot run /memberremove command while the group reply is generating.');
         return '';
     }
@@ -2743,6 +2771,7 @@ async function removeGroupMemberCallback(_, arg) {
 
 async function addGroupMemberCallback(_, arg) {
     if (!selected_group) {
+        // @ts-ignore
         toastr.warning('Cannot run /memberadd command outside of a group chat.');
         return '';
     }
@@ -2771,6 +2800,7 @@ async function addGroupMemberCallback(_, arg) {
     const avatar = character.avatar;
 
     if (group.members.includes(avatar)) {
+        // @ts-ignore
         toastr.warning(`${character.name} is already a member of this group.`);
         return '';
     }
@@ -2790,6 +2820,7 @@ async function triggerGenerationCallback(args, value) {
             await waitUntilCondition(() => !is_send_press && !is_group_generating, 10000, 100);
         } catch {
             console.warn('Timeout waiting for generation unlock');
+            // @ts-ignore
             toastr.warning('Cannot run /trigger command while the reply is being generated.');
             outerResolve(Promise.resolve(''));
             return '';
@@ -2897,6 +2928,7 @@ async function deleteMessagesByNameCallback(_, name) {
     await saveChatConditional();
     await reloadCurrentChat();
 
+    // @ts-ignore
     toastr.info(`Deleted ${messagesToDelete.length} messages from ${name}`);
     return '';
 }
@@ -2967,6 +2999,7 @@ async function continueChatCallback(args, prompt) {
             await waitUntilCondition(() => !is_send_press && !is_group_generating, 10000, 100);
         } catch {
             console.warn('Timeout waiting for generation unlock');
+            // @ts-ignore
             toastr.warning('Cannot run /continue command while the reply is being generated.');
             return reject();
         }
@@ -2997,11 +3030,13 @@ export async function generateSystemMessage(_, prompt) {
 
     if (!prompt) {
         console.warn('WARN: No prompt provided for /sysgen command');
+        // @ts-ignore
         toastr.warning('You must provide a prompt for the system message');
         return '';
     }
 
     // Generate and regex the output if applicable
+    // @ts-ignore
     toastr.info('Please wait', 'Generating...');
     let message = await generateQuietPrompt(prompt, false, false);
     message = getRegexedString(message, regex_placement.SLASH_COMMAND);
@@ -3058,11 +3093,13 @@ function setFlatModeCallback() {
  */
 function setNameCallback({ mode = 'all' }, name) {
     if (!name) {
+        // @ts-ignore
         toastr.warning('You must specify a name to change to');
         return '';
     }
 
     if (!['lookup', 'temp', 'all'].includes(mode)) {
+        // @ts-ignore
         toastr.warning('Mode must be one of "lookup", "temp" or "all"');
         return '';
     }
@@ -3078,6 +3115,7 @@ function setNameCallback({ mode = 'all' }, name) {
             retriggerFirstMessageOnEmptyChat();
             return '';
         } else if (mode === 'lookup') {
+            // @ts-ignore
             toastr.warning(`Persona ${name} not found`);
             return '';
         }
@@ -3095,6 +3133,7 @@ function setNameCallback({ mode = 'all' }, name) {
 async function setNarratorName(_, text) {
     const name = text || NARRATOR_NAME_DEFAULT;
     chat_metadata[NARRATOR_NAME_KEY] = name;
+    // @ts-ignore
     toastr.info(`System narrator name set to ${name}`);
     await saveChatConditional();
     return '';
@@ -3112,17 +3151,20 @@ export async function sendMessageAs(args, text) {
         name = args.name.trim();
 
         if (!name && !text) {
+            // @ts-ignore
             toastr.warning('You must specify a name and text to send as');
             return '';
         }
     } else {
         const namelessWarningKey = 'sendAsNamelessWarningShown';
         if (localStorage.getItem(namelessWarningKey) !== 'true') {
+            // @ts-ignore
             toastr.warning('To avoid confusion, please use /sendas name="Character Name"', 'Name defaulted to {{char}}', { timeOut: 10000 });
             localStorage.setItem(namelessWarningKey, 'true');
         }
         name = name2;
         if (!text) {
+            // @ts-ignore
             toastr.warning('You must specify text to send as');
             return '';
         }
@@ -3414,6 +3456,7 @@ function setBackgroundCallback(_, bg) {
     const result = fuse.search(bg);
 
     if (!result.length) {
+        // @ts-ignore
         toastr.error(`No background found with name "${bg}"`);
         return '';
     }
@@ -3477,6 +3520,7 @@ function getModelOptions(quiet) {
     const modelSelectItem = modelSelectMap.find(x => x.api == main_api && x.type == apiSubType)?.id;
 
     if (!modelSelectItem) {
+        // @ts-ignore
         !quiet && toastr.info('Setting a model for your API is not supported or not implemented yet.');
         return nullResult;
     }
@@ -3484,6 +3528,7 @@ function getModelOptions(quiet) {
     const modelSelectControl = document.getElementById(modelSelectItem);
 
     if (!(modelSelectControl instanceof HTMLSelectElement)) {
+        // @ts-ignore
         !quiet && toastr.error(`Model select control not found: ${main_api}[${apiSubType}]`);
         return nullResult;
     }
@@ -3508,6 +3553,7 @@ function modelCallback(args, model) {
     }
 
     if (!options.length) {
+        // @ts-ignore
         !quiet && toastr.warning('No model options found. Check your API settings.');
         return '';
     }
@@ -3539,9 +3585,11 @@ function modelCallback(args, model) {
     if (newSelectedOption) {
         modelSelectControl.value = newSelectedOption.value;
         $(modelSelectControl).trigger('change');
+        // @ts-ignore
         !quiet && toastr.success(`Model set to "${newSelectedOption.text}"`);
         return newSelectedOption.value;
     } else {
+        // @ts-ignore
         !quiet && toastr.warning(`No model found with name "${model}"`);
         return '';
     }
@@ -3649,6 +3697,7 @@ async function setApiUrlCallback({ api = null, connect = 'true', quiet = 'false'
         }
 
         if (!isCurrentlyCustomOpenai && autoConnect) {
+            // @ts-ignore
             toastr.warning('Custom OpenAI API is not the currently selected API, so we cannot do an auto-connect. Consider switching to it via /api beforehand.');
             return '';
         }
@@ -3670,6 +3719,7 @@ async function setApiUrlCallback({ api = null, connect = 'true', quiet = 'false'
         }
 
         if (!isCurrentlyKoboldClassic && autoConnect) {
+            // @ts-ignore
             toastr.warning('Kobold Classic API is not the currently selected API, so we cannot do an auto-connect. Consider switching to it via /api beforehand.');
             return '';
         }
@@ -3687,18 +3737,22 @@ async function setApiUrlCallback({ api = null, connect = 'true', quiet = 'false'
 
     // Do some checks and get the api type we are targeting with this command
     if (api && !Object.values(textgen_types).includes(api)) {
+        // @ts-ignore
         !isQuiet && toastr.warning(`API '${api}' is not a valid text_gen API.`);
         return '';
     }
     if (!api && !Object.values(textgen_types).includes(textgenerationwebui_settings.type)) {
+        // @ts-ignore
         !isQuiet && toastr.warning(`API '${textgenerationwebui_settings.type}' is not a valid text_gen API.`);
         return '';
     }
     if (!api && main_api !== 'textgenerationwebui') {
+        // @ts-ignore
         !isQuiet && toastr.warning(`API type '${main_api}' does not support setting the server URL.`);
         return '';
     }
     if (api && url && autoConnect && api !== textgenerationwebui_settings.type) {
+        // @ts-ignore
         !isQuiet && toastr.warning(`API '${api}' is not the currently selected API, so we cannot do an auto-connect. Consider switching to it via /api beforehand.`);
         return '';
     }
@@ -3706,6 +3760,7 @@ async function setApiUrlCallback({ api = null, connect = 'true', quiet = 'false'
 
     const inputSelector = SERVER_INPUTS[type];
     if (!inputSelector) {
+        // @ts-ignore
         !isQuiet && toastr.warning(`API '${type}' does not have a server url input.`);
         return '';
     }
@@ -3739,6 +3794,7 @@ async function selectTokenizerCallback(_, name) {
     const result = fuse.search(name);
 
     if (result.length === 0) {
+        // @ts-ignore
         toastr.warning(`Tokenizer "${name}" not found`);
         return '';
     }
@@ -3795,17 +3851,22 @@ export function stopScriptExecution() {
  */
 async function clearCommandProgress() {
     if (isExecutingCommandsFromChatInput) return;
+    // @ts-ignore
     document.querySelector('#send_textarea').style.setProperty('--progDone', '1');
     await delay(250);
     if (isExecutingCommandsFromChatInput) return;
+    // @ts-ignore
     document.querySelector('#send_textarea').style.transition = 'none';
     await delay(1);
+    // @ts-ignore
     document.querySelector('#send_textarea').style.setProperty('--prog', '0%');
+    // @ts-ignore
     document.querySelector('#send_textarea').style.setProperty('--progDone', '0');
     document.querySelector('#form_sheld').classList.remove('script_success');
     document.querySelector('#form_sheld').classList.remove('script_error');
     document.querySelector('#form_sheld').classList.remove('script_aborted');
     await delay(1);
+    // @ts-ignore
     document.querySelector('#send_textarea').style.transition = null;
 }
 /**
@@ -3861,7 +3922,9 @@ export async function executeSlashCommandsOnChatInput(text, options = {}) {
         ta.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
+    // @ts-ignore
     document.querySelector('#send_textarea').style.setProperty('--prog', '0%');
+    // @ts-ignore
     document.querySelector('#send_textarea').style.setProperty('--progDone', '0');
     document.querySelector('#form_sheld').classList.remove('script_success');
     document.querySelector('#form_sheld').classList.remove('script_error');
@@ -3905,12 +3968,14 @@ export async function executeSlashCommandsOnChatInput(text, options = {}) {
                     <pre style="text-align:left;">${ex.hint}</pre>
                     `;
                 const clickHint = '<p>Click to see details</p>';
+                // @ts-ignore
                 toastr.error(
                     `${toast}${clickHint}`,
                     'SlashCommandExecutionError',
                     { escapeHtml: false, timeOut: 10000, onclick: () => callPopup(toast, 'text') },
                 );
             } else {
+                // @ts-ignore
                 toastr.error(result.errorMessage);
             }
         }
@@ -3962,6 +4027,7 @@ async function executeSlashCommandsWithOptions(text, options = {}) {
                 <pre style="text-align:left;">${ex.hint}</pre>
                 `;
             const clickHint = '<p>Click to see details</p>';
+            // @ts-ignore
             toastr.error(
                 `${toast}${clickHint}`,
                 'SlashCommandParserError',
@@ -3977,6 +4043,7 @@ async function executeSlashCommandsWithOptions(text, options = {}) {
     try {
         const result = await closure.execute();
         if (result.isAborted && !result.isQuietlyAborted) {
+            // @ts-ignore
             toastr.warning(result.abortReason, 'Command execution aborted');
             closure.abortController.signal.isQuiet = true;
         }
@@ -3992,12 +4059,14 @@ async function executeSlashCommandsWithOptions(text, options = {}) {
                     <pre style="text-align:left;">${ex.hint}</pre>
                     `;
                 const clickHint = '<p>Click to see details</p>';
+                // @ts-ignore
                 toastr.error(
                     `${toast}${clickHint}`,
                     'SlashCommandExecutionError',
                     { escapeHtml: false, timeOut: 10000, onclick: () => callPopup(toast, 'text') },
                 );
             } else {
+                // @ts-ignore
                 toastr.error(e.message);
             }
             const result = new SlashCommandClosureResult();

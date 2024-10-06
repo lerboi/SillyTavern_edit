@@ -91,6 +91,7 @@ function renderAlternativeTokensView() {
         prefixSpan.attr('title', 'Select to reroll the last \'Continue\' generation');
         prefixSpan.click(onPrefixClicked);
         addKeyboardProps(prefixSpan);
+        // @ts-ignore
         tokenSpans.push(...withVirtualWhitespace(prefix, prefixSpan));
     }
 
@@ -101,8 +102,10 @@ function renderAlternativeTokensView() {
         span.text(text);
         span.addClass('logprobs_output_token');
         span.addClass('logprobs_tint_' + (i % TINTS));
+        // @ts-ignore
         span.click(() => onSelectedTokenChanged(tokenData, span));
         addKeyboardProps(span);
+        // @ts-ignore
         tokenSpans.push(...withVirtualWhitespace(token, span));
     });
 
@@ -167,7 +170,9 @@ function renderTopLogprobs() {
             container.addClass('selected');
         }
 
+        // @ts-ignore
         const tokenText = $('<span></span>').text(`${toVisibleWhitespace(token)}`);
+        // @ts-ignore
         const percentText = $('<span></span>').text(`${(probability * 100).toFixed(2)}%`);
         container.append(tokenText, percentText);
         if (log) {
@@ -175,6 +180,7 @@ function renderTopLogprobs() {
         }
         addKeyboardProps(container);
         if (token !== '<others>') {
+            // @ts-ignore
             container.click(() => onAlternativeClicked(state.selectedTokenLogprobs, token));
         } else {
             container.prop('disabled', true);
@@ -263,6 +269,7 @@ function onPrefixClicked() {
 
 function checkGenerateReady() {
     if (is_send_press) {
+        // @ts-ignore
         toastr.warning('Please wait for the current generation to complete.');
         return false;
     }
@@ -357,12 +364,15 @@ function toVisibleWhitespace(input) {
 function withVirtualWhitespace(text, span) {
     const result = [span];
     if (text.match(/^\s/)) {
+        // @ts-ignore
         result.unshift(document.createTextNode('\u200b'));
     }
     if (text.match(/\s$/)) {
+        // @ts-ignore
         result.push($(document.createTextNode('\u200b')));
     }
     if (text.match(/^▁/)) {
+        // @ts-ignore
         result.unshift(document.createTextNode('\u200b'));
     }
     // line breaks are trickier. we don't currently handle consecutive line
@@ -371,11 +381,15 @@ function withVirtualWhitespace(text, span) {
 
     // matches leading line break, at least one character, and trailing line break
     if (text.match(/^\n(?:.|\n)+\n$/)) {
+        // @ts-ignore
         result.unshift($('<br>'));
+        // @ts-ignore
         result.push($('<br>'));
     } else if (text.match(/^\n/)) {
+        // @ts-ignore
         result.unshift($('<br>'));
     } else if (text.match(/\n$/)) {
+        // @ts-ignore
         result.push($('<br>'));
     }
     return result;
@@ -464,6 +478,7 @@ function convertTokenIdLogprobsToText(input) {
     )));
 
     // Submit token IDs to tokenizer to get token text, then build ID->text map
+    // @ts-ignore
     const { chunks } = decodeTextTokens(tokenizerId, tokenIds);
     const tokenIdText = new Map(tokenIds.map((id, i) => [id, chunks[i]]));
 

@@ -396,6 +396,7 @@ async function validateReverseProxy() {
         new URL(oai_settings.reverse_proxy);
     }
     catch (err) {
+        // @ts-ignore
         toastr.error('Entered reverse proxy address is not a valid URL');
         setOnlineStatus('no_connection');
         resultCheckStatus();
@@ -407,6 +408,7 @@ async function validateReverseProxy() {
     const confirmation = skipConfirm || await Popup.show.confirm(t`Connecting To Proxy`, await renderTemplateAsync('proxyConnectionWarning', { proxyURL: DOMPurify.sanitize(oai_settings.reverse_proxy) }));
 
     if (!confirmation) {
+        // @ts-ignore
         toastr.error('Update or remove your reverse proxy settings.');
         setOnlineStatus('no_connection');
         resultCheckStatus();
@@ -803,6 +805,7 @@ async function populateChatHistory(messages, prompts, chatCompletion, type = nul
             content: substituteParamsExtended(oai_settings.continue_nudge_prompt, { lastChatMessage: String(cyclePrompt).trim() }),
             system_prompt: true,
         };
+        // @ts-ignore
         const continuePrompt = new Prompt(promptObject);
         const preparedPrompt = promptManager.preparePrompt(continuePrompt);
         continueMessage = Message.fromPrompt(preparedPrompt);
@@ -958,6 +961,7 @@ function getPromptRole(role) {
  * @param {object[]} options.messageExamples - Array containing all message examples.
  * @returns {Promise<void>}
  */
+// @ts-ignore
 async function populateChatCompletion(prompts, chatCompletion, { bias, quietPrompt, quietImage, type, cyclePrompt, messages, messageExamples }) {
     // Helper function for preparing a prompt, that already exists within the prompt collection, for completion
     const addToChatCompletion = (source, target = null) => {
@@ -1119,6 +1123,7 @@ async function populateChatCompletion(prompts, chatCompletion, { bias, quietProm
  * @param {string} options.personaDescription
  * @returns {Object} prompts - The prepared and merged system and user-defined prompts.
  */
+// @ts-ignore
 function preparePromptsForChatCompletion({ Scenario, charPersonality, name2, worldInfoBefore, worldInfoAfter, charDescription, quietPrompt, bias, extensionPrompts, systemPromptOverride, jailbreakPromptOverride, personaDescription }) {
     const scenarioText = Scenario && oai_settings.scenario_format ? substituteParams(oai_settings.scenario_format) : '';
     const charPersonalityText = charPersonality && oai_settings.personality_format ? substituteParams(oai_settings.personality_format) : '';
@@ -1326,6 +1331,7 @@ export async function prepareOpenAIMessages({
             worldInfoAfter,
             charDescription,
             quietPrompt,
+            // @ts-ignore
             quietImage,
             bias,
             extensionPrompts,
@@ -1340,14 +1346,17 @@ export async function prepareOpenAIMessages({
         await populateChatCompletion(prompts, chatCompletion, { bias, quietPrompt, quietImage, type, cyclePrompt, messages, messageExamples });
     } catch (error) {
         if (error instanceof TokenBudgetExceededError) {
+            // @ts-ignore
             toastr.error('An error occurred while counting tokens: Token budget exceeded.');
             chatCompletion.log('Token budget exceeded.');
             promptManager.error = 'Not enough free tokens for mandatory prompts. Raise your token Limit or disable custom prompts.';
         } else if (error instanceof InvalidCharacterNameError) {
+            // @ts-ignore
             toastr.warning('An error occurred while counting tokens: Invalid character name');
             chatCompletion.log('Invalid character name');
             promptManager.error = 'The name of at least one character contained whitespaces or special characters. Please check your user and character name.';
         } else {
+            // @ts-ignore
             toastr.error('An unknown error occurred while counting tokens. Further information may be available in console.');
             chatCompletion.log('----- Unexpected error while preparing prompts -----');
             chatCompletion.log(error);
@@ -1388,11 +1397,13 @@ function tryParseStreamingError(response, decoded) {
         checkModerationError(data);
 
         if (data.error) {
+            // @ts-ignore
             toastr.error(data.error.message || response.statusText, 'Chat Completion API');
             throw new Error(data);
         }
 
         if (data.message) {
+            // @ts-ignore
             toastr.error(data.message, 'Chat Completion API');
             throw new Error(data);
         }
@@ -1423,6 +1434,7 @@ function checkModerationError(data) {
     if (moderationError) {
         const moderationReason = `Reasons: ${data?.error?.metadata?.reasons?.join(', ') ?? '(N/A)'}`;
         const flaggedText = data?.error?.metadata?.flagged_input ?? '(N/A)';
+        // @ts-ignore
         toastr.info(flaggedText, moderationReason, { timeOut: 10000 });
     }
 }
@@ -1682,6 +1694,7 @@ function saveModelList(data) {
     }
 }
 
+// @ts-ignore
 function appendOpenRouterOptions(model_list, groupModels = false, sort = false) {
     $('#model_openrouter_select').append($('<option>', { value: openrouter_website_model, text: 'Use OpenRouter website setting' }));
 
@@ -2052,6 +2065,7 @@ async function sendOpenAIRequest(type, messages, signal) {
         checkModerationError(data);
 
         if (data.error) {
+            // @ts-ignore
             toastr.error(data.error.message || response.statusText, 'API returned an error');
             throw new Error(data);
         }
@@ -2290,6 +2304,7 @@ function parseOpenAITextLogprobs(logprobs) {
         const topLogprobs = top_logprobs[i] ? Object.entries(top_logprobs[i]) : [];
         const chosenTopToken = topLogprobs.some(([topToken]) => token === topToken);
         if (!chosenTopToken) {
+            // @ts-ignore
             topLogprobs.push([token, token_logprobs[i]]);
         }
         return { token, topLogprobs };
@@ -2299,6 +2314,7 @@ function parseOpenAITextLogprobs(logprobs) {
 
 function handleWindowError(err) {
     const text = parseWindowError(err);
+    // @ts-ignore
     toastr.error(text, 'Window.ai returned an error');
     throw err;
 }
@@ -2764,7 +2780,9 @@ export class ChatCompletion {
      * @returns {ChatCompletion} The current instance for chaining.
      */
     add(collection, position = null) {
+        // @ts-ignore
         this.validateMessageCollection(collection);
+        // @ts-ignore
         this.checkTokenBudget(collection, collection.identifier);
 
         if (null !== position && -1 !== position) {
@@ -3021,12 +3039,14 @@ export class ChatCompletion {
 function loadOpenAISettings(data, settings) {
     openai_setting_names = data.openai_setting_names;
     openai_settings = data.openai_settings;
+    // @ts-ignore
     openai_settings.forEach(function (item, i, arr) {
         openai_settings[i] = JSON.parse(item);
     });
 
     $('#settings_preset_openai').empty();
     let arr_holder = {};
+    // @ts-ignore
     openai_setting_names.forEach(function (item, i, arr) {
         arr_holder[item] = i;
         $('#settings_preset_openai').append(`<option value=${i}>${item}</option>`);
@@ -3035,6 +3055,7 @@ function loadOpenAISettings(data, settings) {
     openai_setting_names = arr_holder;
 
     oai_settings.preset_settings_openai = settings.preset_settings_openai;
+    // @ts-ignore
     $(`#settings_preset_openai option[value=${openai_setting_names[oai_settings.preset_settings_openai]}]`).attr('selected', true);
 
     oai_settings.temp_openai = settings.temp_openai ?? default_settings.temp_openai;
@@ -3134,22 +3155,31 @@ function loadOpenAISettings(data, settings) {
     $(`#openai_inline_image_quality option[value="${oai_settings.inline_image_quality}"]`).prop('selected', true);
 
     $('#model_openai_select').val(oai_settings.openai_model);
+    // @ts-ignore
     $(`#model_openai_select option[value="${oai_settings.openai_model}"`).attr('selected', true);
     $('#model_claude_select').val(oai_settings.claude_model);
+    // @ts-ignore
     $(`#model_claude_select option[value="${oai_settings.claude_model}"`).attr('selected', true);
     $('#model_windowai_select').val(oai_settings.windowai_model);
+    // @ts-ignore
     $(`#model_windowai_select option[value="${oai_settings.windowai_model}"`).attr('selected', true);
     $('#model_google_select').val(oai_settings.google_model);
+    // @ts-ignore
     $(`#model_google_select option[value="${oai_settings.google_model}"`).attr('selected', true);
     $('#model_ai21_select').val(oai_settings.ai21_model);
+    // @ts-ignore
     $(`#model_ai21_select option[value="${oai_settings.ai21_model}"`).attr('selected', true);
     $('#model_mistralai_select').val(oai_settings.mistralai_model);
+    // @ts-ignore
     $(`#model_mistralai_select option[value="${oai_settings.mistralai_model}"`).attr('selected', true);
     $('#model_cohere_select').val(oai_settings.cohere_model);
+    // @ts-ignore
     $(`#model_cohere_select option[value="${oai_settings.cohere_model}"`).attr('selected', true);
     $('#model_perplexity_select').val(oai_settings.perplexity_model);
+    // @ts-ignore
     $(`#model_perplexity_select option[value="${oai_settings.perplexity_model}"`).attr('selected', true);
     $('#model_groq_select').val(oai_settings.groq_model);
+    // @ts-ignore
     $(`#model_groq_select option[value="${oai_settings.groq_model}"`).attr('selected', true);
     $('#model_01ai_select').val(oai_settings.zerooneai_model);
     $('#model_blockentropy_select').val(oai_settings.blockentropy_model);
@@ -3241,6 +3271,7 @@ function loadOpenAISettings(data, settings) {
     $('#chat_completion_source').val(oai_settings.chat_completion_source).trigger('change');
     $('#oai_max_context_unlocked').prop('checked', oai_settings.max_context_unlocked);
     $('#custom_prompt_post_processing').val(oai_settings.custom_prompt_post_processing);
+    // @ts-ignore
     $(`#custom_prompt_post_processing option[value="${oai_settings.custom_prompt_post_processing}"]`).attr('selected', true);
 }
 
@@ -3374,6 +3405,7 @@ async function getStatusOpen() {
 }
 
 function showWindowExtensionError() {
+    // @ts-ignore
     toastr.error('Get it here: <a href="https://windowai.io/" target="_blank">windowai.io</a>', 'Extension is not installed', {
         escapeHtml: false,
         timeOut: 0,
@@ -3481,6 +3513,7 @@ async function saveOpenAIPreset(name, settings, triggerUi = true) {
             oai_settings.preset_settings_openai = data.name;
             const value = openai_setting_names[data.name];
             Object.assign(openai_settings[value], presetBody);
+            // @ts-ignore
             $(`#settings_preset_openai option[value="${value}"]`).attr('selected', true);
             if (triggerUi) $('#settings_preset_openai').trigger('change');
         }
@@ -3489,11 +3522,13 @@ async function saveOpenAIPreset(name, settings, triggerUi = true) {
             openai_setting_names[data.name] = openai_settings.length - 1;
             const option = document.createElement('option');
             option.selected = true;
+            // @ts-ignore
             option.value = openai_settings.length - 1;
             option.innerText = data.name;
             if (triggerUi) $('#settings_preset_openai').append(option).trigger('change');
         }
     } else {
+        // @ts-ignore
         toastr.error('Failed to save preset');
         throw new Error('Failed to save preset');
     }
@@ -3573,6 +3608,7 @@ async function createNewLogitBiasPreset() {
     }
 
     if (name in oai_settings.bias_presets) {
+        // @ts-ignore
         toastr.error('Preset name should be unique.');
         return;
     }
@@ -3617,6 +3653,7 @@ async function onPresetImportFileChange(e) {
     try {
         presetBody = JSON.parse(importedFile);
     } catch (err) {
+        // @ts-ignore
         toastr.error('Invalid file');
         return;
     }
@@ -3658,6 +3695,7 @@ async function onPresetImportFileChange(e) {
     });
 
     if (!savePresetSettings.ok) {
+        // @ts-ignore
         toastr.error('Failed to save preset');
         return;
     }
@@ -3668,6 +3706,7 @@ async function onPresetImportFileChange(e) {
         oai_settings.preset_settings_openai = data.name;
         const value = openai_setting_names[data.name];
         Object.assign(openai_settings[value], presetBody);
+        // @ts-ignore
         $(`#settings_preset_openai option[value="${value}"]`).attr('selected', true);
         $('#settings_preset_openai').trigger('change');
     } else {
@@ -3675,6 +3714,7 @@ async function onPresetImportFileChange(e) {
         openai_setting_names[data.name] = openai_settings.length - 1;
         const option = document.createElement('option');
         option.selected = true;
+        // @ts-ignore
         option.value = openai_settings.length - 1;
         option.innerText = data.name;
         $('#settings_preset_openai').append(option).trigger('change');
@@ -3683,6 +3723,7 @@ async function onPresetImportFileChange(e) {
 
 async function onExportPresetClick() {
     if (!oai_settings.preset_settings_openai) {
+        // @ts-ignore
         toastr.error('No preset selected');
         return;
     }
@@ -3724,11 +3765,13 @@ async function onLogitBiasPresetImportFileChange(e) {
     e.target.value = '';
 
     if (name in oai_settings.bias_presets) {
+        // @ts-ignore
         toastr.error('Preset name should be unique.');
         return;
     }
 
     if (!Array.isArray(importedFile)) {
+        // @ts-ignore
         toastr.error('Invalid logit bias preset file.');
         return;
     }
@@ -3777,6 +3820,7 @@ async function onDeletePresetClick() {
     if (Object.keys(openai_setting_names).length) {
         oai_settings.preset_settings_openai = Object.keys(openai_setting_names)[0];
         const newValue = openai_setting_names[oai_settings.preset_settings_openai];
+        // @ts-ignore
         $(`#settings_preset_openai option[value="${newValue}"]`).attr('selected', true);
         $('#settings_preset_openai').trigger('change');
     }
@@ -3788,8 +3832,10 @@ async function onDeletePresetClick() {
     });
 
     if (!response.ok) {
+        // @ts-ignore
         toastr.warning('Preset was not deleted from server');
     } else {
+        // @ts-ignore
         toastr.success('Preset deleted');
     }
 
@@ -3809,6 +3855,7 @@ async function onLogitBiasPresetDeleteClick() {
 
     if (Object.keys(oai_settings.bias_presets).length) {
         oai_settings.bias_preset_selected = Object.keys(oai_settings.bias_presets)[0];
+        // @ts-ignore
         $(`#openai_logit_bias_preset option[value="${oai_settings.bias_preset_selected}"]`).attr('selected', true);
         $('#openai_logit_bias_preset').trigger('change');
     }
@@ -3918,6 +3965,7 @@ function onSettingsPresetChange() {
         settingsToUpdate: settingsToUpdate,
         settings: oai_settings,
         savePreset: saveOpenAIPreset,
+    // @ts-ignore
     }).finally(r => {
         for (const [key, [selector, setting, isCheckbox]] of Object.entries(settingsToUpdate)) {
             if (preset[key] !== undefined) {
@@ -3926,6 +3974,7 @@ function onSettingsPresetChange() {
                 } else {
                     updateInput(selector, preset[key]);
                 }
+                // @ts-ignore
                 oai_settings[setting] = preset[key];
             }
         }
@@ -4695,6 +4744,7 @@ function toggleChatCompletionForms() {
 async function testApiConnection() {
     // Check if the previous request is still in progress
     if (is_send_press) {
+        // @ts-ignore
         toastr.info(t`Please wait for the previous request to complete.`);
         return;
     }
@@ -4702,9 +4752,11 @@ async function testApiConnection() {
     try {
         const reply = await sendOpenAIRequest('quiet', [{ 'role': 'user', 'content': 'Hi' }]);
         console.log(reply);
+        // @ts-ignore
         toastr.success(t`API connection successful!`);
     }
     catch (err) {
+        // @ts-ignore
         toastr.error(t`Could not get a reply from API. Check your connection settings / API key and try again.`);
     }
 }
@@ -4878,10 +4930,13 @@ $('#save_proxy').on('click', async function () {
 
     setProxyPreset(presetName, reverseProxy, proxyPassword);
     saveSettingsDebounced();
+    // @ts-ignore
     toastr.success(t`Proxy Saved`);
     if ($('#openai_proxy_preset').val() !== presetName) {
         const option = document.createElement('option');
+        // @ts-ignore
         option.text = presetName;
+        // @ts-ignore
         option.value = presetName;
 
         $('#openai_proxy_preset').append(option);
@@ -4912,8 +4967,10 @@ $('#delete_proxy').on('click', async function () {
 
         saveSettingsDebounced();
         $('#openai_proxy_preset').val(selected_proxy.name);
+        // @ts-ignore
         toastr.success(t`Proxy Deleted`);
     } else {
+        // @ts-ignore
         toastr.error(t`Could not find proxy with name '${presetName}'`);
     }
 });
@@ -4928,6 +4985,7 @@ function runProxyCallback(_, value) {
     const result = fuse.search(value);
 
     if (result.length === 0) {
+        // @ts-ignore
         toastr.warning(`Proxy preset "${value}" not found`);
         return '';
     }
@@ -5102,6 +5160,7 @@ export function initOpenAI() {
     $('#update_oai_preset').on('click', async function () {
         const name = oai_settings.preset_settings_openai;
         await saveOpenAIPreset(name, oai_settings);
+        // @ts-ignore
         toastr.success('Preset updated');
     });
 

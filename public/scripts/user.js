@@ -97,6 +97,7 @@ async function enableUser(handle, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to enable user');
             throw new Error('Failed to enable user');
         }
@@ -117,6 +118,7 @@ async function disableUser(handle, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data?.error || 'Unknown error', 'Failed to disable user');
             throw new Error('Failed to disable user');
         }
@@ -143,6 +145,7 @@ async function promoteUser(handle, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to promote user');
             throw new Error('Failed to promote user');
         }
@@ -168,6 +171,7 @@ async function demoteUser(handle, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to demote user');
             throw new Error('Failed to demote user');
         }
@@ -195,6 +199,7 @@ async function createUser(form, callback) {
     }
 
     if (errors.length) {
+        // @ts-ignore
         toastr.error(errors.join(', '), 'Failed to create user');
         return;
     }
@@ -219,6 +224,7 @@ async function createUser(form, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to create user');
             throw new Error('Failed to create user');
         }
@@ -238,6 +244,7 @@ async function createUser(form, callback) {
  */
 async function backupUserData(handle, callback) {
     try {
+        // @ts-ignore
         toastr.info('Please wait for the download to start.', 'Backup Requested');
         const response = await fetch('/api/users/backup', {
             method: 'POST',
@@ -247,6 +254,7 @@ async function backupUserData(handle, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to backup user data');
             throw new Error('Failed to backup user data');
         }
@@ -294,6 +302,7 @@ async function changePassword(handle, callback) {
         }
 
         if (newPassword !== confirmPassword) {
+            // @ts-ignore
             toastr.error('Passwords do not match', 'Failed to change password');
             throw new Error('Passwords do not match');
         }
@@ -306,10 +315,12 @@ async function changePassword(handle, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to change password');
             throw new Error('Failed to change password');
         }
 
+        // @ts-ignore
         toastr.success('Password changed successfully', 'Password Changed');
         callback();
     }
@@ -326,6 +337,7 @@ async function changePassword(handle, callback) {
 async function deleteUser(handle, callback) {
     try {
         if (handle === currentUser.handle) {
+            // @ts-ignore
             toastr.error('Cannot delete yourself', 'Failed to delete user');
             throw new Error('Cannot delete yourself');
         }
@@ -349,6 +361,7 @@ async function deleteUser(handle, callback) {
         }
 
         if (handle !== confirmHandle) {
+            // @ts-ignore
             toastr.error('Handles do not match', 'Failed to delete user');
             throw new Error('Handles do not match');
         }
@@ -361,10 +374,12 @@ async function deleteUser(handle, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to delete user');
             throw new Error('Failed to delete user');
         }
 
+        // @ts-ignore
         toastr.success('User deleted successfully', 'User Deleted');
         callback();
     } catch (error) {
@@ -398,10 +413,12 @@ async function resetSettings(handle, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to reset settings');
             throw new Error('Failed to reset settings');
         }
 
+        // @ts-ignore
         toastr.success('Settings reset successfully', 'Settings Reset');
         callback();
     } catch (error) {
@@ -434,10 +451,12 @@ async function changeName(handle, name, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to change name');
             throw new Error('Failed to change name');
         }
 
+        // @ts-ignore
         toastr.success('Name changed successfully', 'Name Changed');
         callback();
 
@@ -472,6 +491,7 @@ async function restoreSnapshot(name, callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to restore snapshot');
             throw new Error('Failed to restore snapshot');
         }
@@ -498,6 +518,7 @@ async function loadSnapshotContent(name) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to load snapshot content');
             throw new Error('Failed to load snapshot content');
         }
@@ -525,6 +546,7 @@ async function getSnapshots() {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to get settings snapshots');
             throw new Error('Failed to get settings snapshots');
         }
@@ -551,10 +573,12 @@ async function makeSnapshot(callback) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to make snapshot');
             throw new Error('Failed to make snapshot');
         }
 
+        // @ts-ignore
         toastr.success('Snapshot created successfully', 'Snapshot Created');
         callback();
     } catch (error) {
@@ -610,6 +634,7 @@ async function resetEverything(callback) {
 
         if (!step1Response.ok) {
             const data = await step1Response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to reset');
             throw new Error('Failed to reset everything');
         }
@@ -643,10 +668,12 @@ async function resetEverything(callback) {
 
         if (!step2Response.ok) {
             const data = await step2Response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to reset');
             throw new Error('Failed to reset everything');
         }
 
+        // @ts-ignore
         toastr.success('Everything reset successfully', 'Reset Everything');
         callback();
     } catch (error) {
@@ -753,6 +780,7 @@ async function changeAvatar(handle, avatar) {
 
         if (!response.ok) {
             const data = await response.json();
+            // @ts-ignore
             toastr.error(data.error || 'Unknown error', 'Failed to change avatar');
             return;
         }

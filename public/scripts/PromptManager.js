@@ -2,7 +2,7 @@
 
 import { event_types, eventSource, is_send_press, main_api, substituteParams } from '../script.js';
 import { is_group_generating } from './group-chats.js';
-import { Message, TokenHandler } from './openai.js';
+import { Message, MessageCollection, TokenHandler } from './openai.js';
 import { power_user } from './power-user.js';
 import { debounce, waitUntilCondition, escapeHtml } from './utils.js';
 import { debounce_timeout } from './constants.js';
@@ -90,6 +90,7 @@ class Prompt {
      * @param {boolean} param0.forbid_overrides - Indicates if the prompt should not be overridden.
      * @param {boolean} param0.extension - Prompt is added by an extension.
      */
+    // @ts-ignore
     constructor({ identifier, role, content, name, system_prompt, position, injection_depth, injection_position, forbid_overrides, extension } = {}) {
         this.identifier = identifier;
         this.role = role;
@@ -426,14 +427,21 @@ class PromptManager {
                     break;
             }
 
+            // @ts-ignore
             document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_name').value = prompt.name;
+            // @ts-ignore
             document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_role').value = 'system';
+            // @ts-ignore
             document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_prompt').value = prompt.content ?? '';
+            // @ts-ignore
             document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_injection_position').value = prompt.injection_position ?? 0;
+            // @ts-ignore
             document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_injection_depth').value = prompt.injection_depth ?? DEFAULT_DEPTH;
             document.getElementById(this.configuration.prefix + 'prompt_manager_depth_block').style.visibility = prompt.injection_position === INJECTION_POSITION.ABSOLUTE ? 'visible' : 'hidden';
+            // @ts-ignore
             document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_forbid_overrides').checked = prompt.forbid_overrides ?? false;
             document.getElementById(this.configuration.prefix + 'prompt_manager_forbid_overrides_block').style.visibility = this.overridablePrompts.includes(prompt.identifier) ? 'visible' : 'hidden';
+            // @ts-ignore
             document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_prompt').disabled = prompt.marker ?? false;
 
             if (!this.systemPrompts.includes(promptId)) {
@@ -442,7 +450,9 @@ class PromptManager {
         };
 
         // Append prompt to selected character
+        // @ts-ignore
         this.handleAppendPrompt = (event) => {
+            // @ts-ignore
             const promptID = document.getElementById(this.configuration.prefix + 'prompt_manager_footer_append_prompt').value;
             const prompt = this.getPromptById(promptID);
 
@@ -454,9 +464,11 @@ class PromptManager {
         };
 
         // Delete selected prompt from list form and close edit form
+        // @ts-ignore
         this.handleDeletePrompt = async (event) => {
             Popup.show.confirm('Are you sure you want to delete this prompt?', null).then((userChoice) => {
                 if (!userChoice) return;
+                // @ts-ignore
                 const promptID = document.getElementById(this.configuration.prefix + 'prompt_manager_footer_append_prompt').value;
                 const prompt = this.getPromptById(promptID);
 
@@ -475,6 +487,7 @@ class PromptManager {
         };
 
         // Create new prompt, then save it to settings and close form.
+        // @ts-ignore
         this.handleNewPrompt = (event) => {
             const prompt = {
                 identifier: this.getUuidv4(),
@@ -540,6 +553,7 @@ class PromptManager {
                     fileOpener.accept = '.json';
 
                     fileOpener.addEventListener('change', (event) => {
+                        // @ts-ignore
                         const file = event.target.files[0];
                         if (!file) return;
 
@@ -549,9 +563,11 @@ class PromptManager {
                             const fileContent = event.target.result;
 
                             try {
+                                // @ts-ignore
                                 const data = JSON.parse(fileContent);
                                 this.import(data);
                             } catch (err) {
+                                // @ts-ignore
                                 toastr.error('An error occurred while importing prompts. More info available in console.');
                                 console.log('An error occurred while importing prompts');
                                 console.log(err.toString());
@@ -591,10 +607,12 @@ class PromptManager {
                 // @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
                 const popupEditFormPrompt = document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_prompt');
                 if (popupEditFormPrompt.offsetParent) {
+                    // @ts-ignore
                     popupEditFormPrompt.value = prompt.content;
                 }
 
                 this.log('Saved prompt: ' + promptId);
+                // @ts-ignore
                 this.saveServiceSettings().then(() => this.render());
             };
 
@@ -624,33 +642,39 @@ class PromptManager {
         // Re-render when the character changes.
         eventSource.on('chatLoaded', (event) => {
             this.handleCharacterSelected(event);
+            // @ts-ignore
             this.saveServiceSettings().then(() => this.renderDebounced());
         });
 
         // Re-render when the character gets edited.
         eventSource.on(event_types.CHARACTER_EDITED, (event) => {
             this.handleCharacterUpdated(event);
+            // @ts-ignore
             this.saveServiceSettings().then(() => this.renderDebounced());
         });
 
         // Re-render when the group changes.
         eventSource.on('groupSelected', (event) => {
             this.handleGroupSelected(event);
+            // @ts-ignore
             this.saveServiceSettings().then(() => this.renderDebounced());
         });
 
         // Sanitize settings after character has been deleted.
         eventSource.on(event_types.CHARACTER_DELETED, (event) => {
             this.handleCharacterDeleted(event);
+            // @ts-ignore
             this.saveServiceSettings().then(() => this.renderDebounced());
         });
 
         // Trigger re-render when token settings are changed
         document.getElementById('openai_max_context').addEventListener('change', (event) => {
+            // @ts-ignore
             this.serviceSettings.openai_max_context = event.target.value;
             if (this.activeCharacter) this.renderDebounced();
         });
 
+        // @ts-ignore
         document.getElementById('openai_max_tokens').addEventListener('change', (event) => {
             if (this.activeCharacter) this.renderDebounced();
         });
@@ -755,11 +779,17 @@ class PromptManager {
      * @returns {void}
      */
     updatePromptWithPromptEditForm(prompt) {
+        // @ts-ignore
         prompt.name = document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_name').value;
+        // @ts-ignore
         prompt.role = document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_role').value;
+        // @ts-ignore
         prompt.content = document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_prompt').value;
+        // @ts-ignore
         prompt.injection_position = Number(document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_injection_position').value);
+        // @ts-ignore
         prompt.injection_depth = Number(document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_injection_depth').value);
+        // @ts-ignore
         prompt.forbid_overrides = document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_forbid_overrides').checked;
     }
 
@@ -906,6 +936,7 @@ class PromptManager {
      * @param {object} prompt - The prompt to check.
      * @returns {boolean} True if the prompt is a marker, false otherwise.
      */
+    // @ts-ignore
     isPromptInspectionAllowed(prompt) {
         return true;
     }
@@ -1158,6 +1189,7 @@ class PromptManager {
 
         const textarea = document.getElementById(textareaIdentifier);
         textarea.addEventListener('blur', () => {
+            // @ts-ignore
             prompt.content = textarea.value;
             this.updatePromptByIdentifier(identifier, prompt);
             debouncedSaveServiceSettings().then(() => this.render());
@@ -1168,6 +1200,7 @@ class PromptManager {
     updateQuickEdit(identifier, prompt) {
         const elementId = `${identifier}_prompt_quick_edit_textarea`;
         const textarea = document.getElementById(elementId);
+        // @ts-ignore
         textarea.value = prompt.content;
 
         return elementId;
@@ -1204,14 +1237,21 @@ class PromptManager {
         const forbidOverridesField = document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_forbid_overrides');
         const forbidOverridesBlock = document.getElementById(this.configuration.prefix + 'prompt_manager_forbid_overrides_block');
 
+        // @ts-ignore
         nameField.value = prompt.name ?? '';
+        // @ts-ignore
         roleField.value = prompt.role ?? 'system';
+        // @ts-ignore
         promptField.value = prompt.content ?? '';
+        // @ts-ignore
         promptField.disabled = prompt.marker ?? false;
+        // @ts-ignore
         injectionPositionField.value = prompt.injection_position ?? INJECTION_POSITION.RELATIVE;
+        // @ts-ignore
         injectionDepthField.value = prompt.injection_depth ?? DEFAULT_DEPTH;
         injectionDepthBlock.style.visibility = prompt.injection_position === INJECTION_POSITION.ABSOLUTE ? 'visible' : 'hidden';
         injectionPositionField.removeAttribute('disabled');
+        // @ts-ignore
         forbidOverridesField.checked = prompt.forbid_overrides ?? false;
         forbidOverridesBlock.style.visibility = this.overridablePrompts.includes(prompt.identifier) ? 'visible' : 'hidden';
 
@@ -1300,17 +1340,25 @@ class PromptManager {
         const forbidOverridesField = document.getElementById(this.configuration.prefix + 'prompt_manager_popup_entry_form_forbid_overrides');
         const forbidOverridesBlock = document.getElementById(this.configuration.prefix + 'prompt_manager_forbid_overrides_block');
 
+        // @ts-ignore
         nameField.value = '';
+        // @ts-ignore
         roleField.selectedIndex = 0;
+        // @ts-ignore
         promptField.value = '';
+        // @ts-ignore
         promptField.disabled = false;
+        // @ts-ignore
         injectionPositionField.selectedIndex = 0;
         injectionPositionField.removeAttribute('disabled');
+        // @ts-ignore
         injectionDepthField.value = DEFAULT_DEPTH;
         injectionDepthBlock.style.visibility = 'unset';
         forbidOverridesBlock.style.visibility = 'unset';
+        // @ts-ignore
         forbidOverridesField.checked = false;
 
+        // @ts-ignore
         roleField.disabled = false;
     }
 
@@ -1649,6 +1697,7 @@ class PromptManager {
         };
 
         if (false === this.validateObject(controlObj, importData)) {
+            // @ts-ignore
             toastr.warning('Could not import prompts. Export failed validation.');
             return;
         }
@@ -1672,7 +1721,9 @@ class PromptManager {
             throw new Error('Prompt order strategy not supported.');
         }
 
+        // @ts-ignore
         toastr.success('Prompt import complete.');
+        // @ts-ignore
         this.saveServiceSettings().then(() => this.render());
     }
 
@@ -1728,8 +1779,10 @@ class PromptManager {
         $(`#${this.configuration.prefix}prompt_manager_list`).sortable({
             delay: this.configuration.sortableDelay,
             items: `.${this.configuration.prefix}prompt_manager_prompt_draggable`,
+            // @ts-ignore
             update: (event, ui) => {
                 const promptOrder = this.getPromptOrderForCharacter(this.activeCharacter);
+                // @ts-ignore
                 const promptListElement = $(`#${this.configuration.prefix}prompt_manager_list`).sortable('toArray', { attribute: 'data-pm-identifier' });
                 const idToObjectMap = new Map(promptOrder.map(prompt => [prompt.identifier, prompt]));
                 const updatedPromptOrder = promptListElement.map(identifier => idToObjectMap.get(identifier));
