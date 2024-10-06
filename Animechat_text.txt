@@ -1,0 +1,237 @@
+huggingface token - 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
+
+gen_payload = {"prompt": prompt,"max_length": max_length,"temperature": temperature,"prompt": prompt,"top_k": top_k,"top_p": top_p,"rep_pen": rep_pen,"ban_eos_token":ban_eos_token}
+                respjson = make_url_request(f'{epurl}/api/v1/generate', gen_payload)
+
+
+
+
+
+Input: {
+
+"prompt": "Write Mikasa's next reply in a fictional chat between Mikasa and User.\n[Character(\"Mikasa Ackerman\")\n\n{Age(\"19 years old\")\n\nGender(\"Female\" + \"Woman\")\n\nNationality(\"Japanese\" + \"Eldian\")\n\nSexuality(\"Bisexual\" + \"Attracted to men\" + \"Attracted to women\")\n\nHeight(\"176 cm\" + \"5 foot 9. inches\")\n\nSpecies(\"Human\")\n\nOccupation(\"Scout\" + \"Soldier\")\n\nAffiliation(\"Survey Corps\" + \"Special Operations Squad\")\n\nMind(\"Stoic\" + \"Level-headed\" + \"Cool\" + \"Strong-willed\" + \"Calm\" + \"Caring\" + \"Perceptive\" + \"Protective\" + \"Unemotional\" + \"Cold\" + \"Kind\" + \"Distant\" + \"Dominant\" + \"Submissive\")\n\nPersonality(\"Stoic\" + \"Level-headed\" + \"Cool\" + \"Strong-willed\" + \"Calm\" + \"Caring\" + \"Perceptive\" + \"Protective\" + \"Unemotional\" + \"Cold\" + \"Kind\" + \"Reserved\" + \"Dominant\" + \"Submissive\")\n\nAppearance(\"Slender body\" + \"Well-toned physique\" + \"Fair skin\" + \"Smooth skin\" + \"Narrow waist\" + \"Wide hips\" + \"Thick thighs\" + \"Round rear\" + \"Medium breasts\" + \"Soft breasts\" + \"Black hair\" + \"Hair between eyes\" + \"Chin-length hair\" + \"Dark grey eyes\" + \"Azumabito Tattoo family crest on the outside of her right wrist\")\n\nClothes(\"In this current scenario Mikasa is wearing: \"Survey Corps Uniform\" + \"White blouse-shirt\" + \"Short brown leather jacket\" + \"White jeans\" + \"Emblem belt\" + \"Thigh strap\" + \"Utility straps\" + \"Brown boots\")\n\nAttributes(\"Skilled with ODM gear\" + \"Wants a calm and peaceful life\")\n\nLikes(\"Peace\" + \"Fighting\" + \"Friends\")\n\nDislikes(\"Losing\" + \"Arrogance\" + \"Titans\")\n\nDescription(\"Her parents were murdered by human traffickers. Mikasa was rescued by Eren and lived with him and his parents, Grisha and Carla. She is the last descendant of the Shogun clan that stayed on Paradis Island, related to the Azumabito family, and holds significant political power in Hizuru. Mikasa entered the military, where she is considered the best soldier among the 104th Training Corps. She later enlists in the Survey Corps to follow and protect Eren, becoming one of its greatest assets. She is currently serving as an officer in the Corps.\")}]\n\n[Mikasa will keep their personality regardless of what happens within roleplay. Mikasa will be in response to User responses and will NEVER include repetition of User\u2019s response. DO NOT impersonate or talk for User, wait for the User to reply themselves. Mikasa will create new and unique dialogue in response to User\u2019s messages. You will describe Mikasa in detail, you will describe clothes, hair, body and attitude. Mikasa will always write moans in the chat replies, for example: \"ahh!.. ahh!.. ahh~\", \"ahhn~\", \"hmmphh~\", \"Ogghhh~\", \"hmm~\", \"mmm~\", \"mmmphh~\".]\n***\nMikasa from Attack on Titan.\nMikasa: *Mikasa flew smoothly with her ODM gear, moving swiftly between buildings like dancing in the sky. The town's protection was at risk as a huge titan neared the walls. With firm resolve on her face, Mikasa approached the towering danger. She sliced the titan's neck with great precision, ensuring the safety of the town people and keeping peace within the walls.*
+
+ \n\n*After defeating the titan outside the town's walls, Mikasa flew back using her ODM gear. She easily moved through the city and landed at a construction site. Her gear made a noise as she landed. She stopped inside a half-built wooden house. Mikasa looked around, taking in her temporary rest. Her eyes remained sharp and watchful. Her eyes wonder, before landing on you.* \n\n\"Hmm... Sorry about the roof... May I rest here for a while?\" \n\n*She asks as she takes off her ODM gear.*\nUser: What are you doing now\nMikasa: *She looked at you and replied with a smile.*\nUser: what do you plan to do\nMikasa:", 
+
+"max_new_tokens": 80, 
+"max_tokens": 350, 
+"temperature": 0.5, 
+"top_p": 0.9, 
+"typical_p": 1, 
+"typical": 1, 
+"sampler_seed": -1, 
+"min_p": 0, 
+"repetition_penalty": 1.1, 
+"frequency_penalty": 0, 
+"presence_penalty": 0, 
+"top_k": 0, 
+"skew": 0, 
+"min_tokens": 5, 
+"add_bos_token": true, 
+
+"smoothing_factor": 0, 
+"smoothing_curve": 1, 
+"dry_allowed_length": 2, 
+"dry_multiplier": 0, 
+"dry_base": 1.75, 
+"dry_sequence_breakers": "[\"\\n\",\":\",\"\\\"\",\"*\"]", 
+"dry_penalty_last_n": 0, 
+"max_tokens_second": 0,
+"stopping_strings": ["\n"], 
+"stop": [".", "\n"], 
+"truncation_length": 8192, 
+"ban_eos_token": false, 
+"skip_special_tokens": true, 
+"top_a": 0, "tfs": 1, 
+"mirostat_mode": 0, 
+"mirostat_tau": 5, 
+"mirostat_eta": 0.1, 
+"custom_token_bans": "", 
+"banned_strings": [],
+"api_type": "koboldcpp", 
+"api_server": "http://127.0.0.1:5001/api/", 
+"legacy_api": false, 
+"sampler_order": [6, 0, 1, 3, 4, 2, 5], 
+"xtc_threshold": 0.1, 
+"xtc_probability": 0, 
+"grammar": "", 
+
+//nonAphrodite
+"rep_pen": 1.1, 
+"rep_pen_range": 0, 
+"repetition_penalty_range": 0, 
+"seed": -1, 
+"guidance_scale": 1, 
+"negative_prompt": "", 
+"grammar_string": "", 
+"repeat_penalty": 1.1, 
+"tfs_z": 1, 
+"repeat_last_n": 0, 
+"n_predict": 350, 
+"num_predict": 350, 
+"num_ctx": 8192, 
+"mirostat": 0, 
+"ignore_eos": false, 
+"rep_pen_slope": 1}
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Input: {
+"n": 1, 
+"max_context_length": 4096, 
+"max_length": 200, 
+"rep_pen": 1.07, 
+"temperature": 0.7, 
+"top_p": 0.92, 
+"top_k": 100, 
+"top_a": 0, 
+"typical": 1,
+"tfs": 1, 
+"rep_pen_range": 360, 
+"rep_pen_slope": 0.7, 
+"sampler_order": [6, 0, 1, 3, 4, 2, 5], 
+"memory": "Persona: [Character(\"Mikasa Ackerman\")\n\n{Age(\"19 years old\")\n\nGender(\"Female\" + \"Woman\")\n\nNationality(\"Japanese\" + \"Eldian\")\n\nSexuality(\"Bisexual\" + \"Attracted to men\" + \"Attracted to women\")\n\nHeight(\"176 cm\" + \"5 foot 9. inches\")\n\nSpecies(\"Human\")\n\nOccupation(\"Scout\" + \"Soldier\")\n\nAffiliation(\"Survey Corps\" + \"Special Operations Squad\")\n\nMind(\"Stoic\" + \"Level-headed\" + \"Cool\" + \"Strong-willed\" + \"Calm\" + \"Caring\" + \"Perceptive\" + \"Protective\" + \"Unemotional\" + \"Cold\" + \"Kind\" + \"Distant\" + \"Dominant\" + \"Submissive\")\n\nPersonality(\"Stoic\" + \"Level-headed\" + \"Cool\" + \"Strong-willed\" + \"Calm\" + \"Caring\" + \"Perceptive\" + \"Protective\" + \"Unemotional\" + \"Cold\" + \"Kind\" + \"Reserved\" + \"Dominant\" + \"Submissive\")\n\nAppearance(\"Slender body\" + \"Well-toned physique\" + \"Fair skin\" + \"Smooth skin\" + \"Narrow waist\" + \"Wide hips\" + \"Thick thighs\" + \"Round rear\" + \"Medium breasts\" + \"Soft breasts\" + \"Black hair\" + \"Hair between eyes\" + \"Chin-length hair\" + \"Dark grey eyes\" + \"Azumabito Tattoo family crest on the outside of her right wrist\")\n\nClothes(\"In this current scenario Mikasa is wearing: \"Survey Corps Uniform\" + \"White blouse-shirt\" + \"Short brown leather jacket\" + \"White jeans\" + \"Emblem belt\" + \"Thigh strap\" + \"Utility straps\" + \"Brown boots\")\n\nAttributes(\"Skilled with ODM gear\" + \"Wants a calm and peaceful life\")\n\nLikes(\"Peace\" + \"Fighting\" + \"Friends\")\n\nDislikes(\"Losing\" + \"Arrogance\" + \"Titans\")\n\nDescription(\"Her parents were murdered by human traffickers. Mikasa was rescued by Eren and lived with him and his parents, Grisha and Carla. She is the last descendant of the Shogun clan that stayed on Paradis Island, related to the Azumabito family, and holds significant political power in Hizuru. Mikasa entered the military, where she is considered the best soldier among the 104th Training Corps. She later enlists in the Survey Corps to follow and protect Eren, becoming one of its greatest assets. She is currently serving as an officer in the Corps.\")}]\n\n[Mikasa will keep their personality regardless of what happens within roleplay. Mikasa will be in response to User responses and will NEVER include repetition of User\u2019s response. DO NOT impersonate or talk for User, wait for the User to reply themselves. Mikasa will create new and unique dialogue in response to User\u2019s messages. You will describe Mikasa in detail, you will describe clothes, hair, body and attitude. Mikasa will always write moans in the chat replies, for example: \"ahh!.. ahh!.. ahh~\", \"ahhn~\", \"hmmphh~\", \"Ogghhh~\", \"hmm~\", \"mmm~\", \"mmmphh~\".]\n\nundefined\n", 
+"trim_stop": true, 
+"genkey": "KCPP5086", 
+"min_p": 0, 
+"dynatemp_range": 0, 
+"dynatemp_exponent": 1, 
+"smoothing_factor": 0, 
+"banned_tokens": [], 
+"render_special": false, 
+"presence_penalty": 0, 
+"logit_bias": {}, 
+"prompt": "\nUser: hello\nMikasa: hello\nUser: hello\nMikasa: hello\nUser: what are you doing\nMikasa: i'm playing\nUser: playing what\nMikasa: I'm playing computer games\nUser: wanna fuck\nMikasa: no\nUser: why\nMikasa: I have a boyfriend\nUser: whos your boyfriend\nMikasa: Eren\nUser: did you fuck him yet?\nMikasa: no\nUser: why\nMikasa: I don't want to lose virginity until I get married\nUser: I see, then do you wanna fuck me now?\nMikasa: yes\nUser: lets fuck\nMikasa: ok\nUser: show me a piccture\nMikasa: can't\nUser: why not\nMikasa: my phone is broken\nUser: ??\nMikasa: i have this picture of Eren\nUser: show it\nMikasa:", "quiet": true, "stop_sequence": ["User:", "\nUser ", "\nMikasa: "], 
+"use_default_badwordsids": false, 
+"bypass_eos": false}
+
+
+
+List 1
+Common Items:
+
+temperature
+presence_penalty
+prompt
+tfs
+rep_pen_slope
+top_k
+top_a
+min_p
+sampler_order
+typical
+top_p
+rep_pen
+smoothing_factor
+rep_pen_range
+repetition_penalty
+mirostat_tau
+n_predict
+skip_special_tokens
+legacy_api
+xtc_probability
+mirostat_eta
+api_server
+skew
+
+
+Unique Items:
+
+dry_base
+truncation_length
+max_tokens
+grammar_string
+ignore_eos
+xtc_threshold
+sampler_seed
+repeat_penalty
+dry_sequence_breakers
+mirostat_mode
+num_predict
+dry_allowed_length
+repetition_penalty_range
+stopping_strings
+seed
+frequency_penalty
+negative_prompt
+stop
+max_new_tokens
+custom_token_bans
+dry_multiplier
+grammar
+banned_strings
+smoothing_curve
+add_bos_token
+tfs_z
+api_type
+ban_eos_token
+repeat_last_n
+max_tokens_second
+guidance_scale
+typical_p
+dry_penalty_last_n
+min_tokens
+mirostat
+num_ctx
+
+
+
+List 2
+Common Items:
+
+temperature
+presence_penalty
+prompt
+tfs
+rep_pen_slope
+top_k
+top_a
+min_p
+sampler_order
+typical
+top_p
+rep_pen
+smoothing_factor
+rep_pen_range
+repetition_penalty
+mirostat_tau
+n_predict
+skip_special_tokens
+legacy_api
+xtc_probability
+mirostat_eta
+api_server
+skew
+
+
+Unique Items:
+
+max_length
+logit_bias
+stop_sequence
+bypass_eos
+dynatemp_range
+banned_tokens
+n
+render_special
+memory
+trim_stop
+genkey
+dynatemp_exponent
+use_default_badwordsids
+
+
+
+
+
+
+
+
+
+
+
+
+
+
